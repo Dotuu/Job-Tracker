@@ -1,5 +1,10 @@
 <script lang="ts">
-	let { children } = $props();
+	import type { Snippet } from 'svelte';
+	import { ClerkProvider } from 'svelte-clerk';
+
+	const { children }: { children: Snippet } = $props();
 </script>
 
-{@render children()}
+<ClerkProvider>
+	{@render children()}
+</ClerkProvider>
