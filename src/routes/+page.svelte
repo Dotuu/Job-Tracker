@@ -1,7 +1,6 @@
 <script>
-  import { brand } from "$lib";
-  import Info from "./info.svelte";
-  import Graphic from "./graphic.svelte";
+  import Info from "../lib/components/Info.svelte";
+  import Graphic from "../lib/components/Graphic.svelte";
 </script>
 
 <div class="body">
