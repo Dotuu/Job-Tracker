@@ -1,12 +1,19 @@
-import { Show } from "@clerk/react";
+import { ClerkLoaded, ClerkLoading } from "@clerk/react";
 import "./App.css";
+import { Skeleton } from "./components/ui/skeleton";
+import { HomePage } from "./components/HomePage";
 
 function App() {
   return (
-    <header>
-      <Show when="signed-in"></Show>
-      <Show when="signed-out"></Show>
-    </header>
+    <div className="home_root">
+      <ClerkLoading>
+        <Skeleton className="h-11 w-24 rounded-md" />
+      </ClerkLoading>
+
+      <ClerkLoaded>
+        <HomePage />
+      </ClerkLoaded>
+    </div>
   );
 }
 
