@@ -1,4 +1,4 @@
-import type { ApplicationDataProps } from "@/components/NewApplication";
+import type { NewApplicationProps } from "@/components/NewApplication";
 
 export const loadApplicationData = async () => {
   const route: string = "http://localhost:5173/api/applications";
@@ -20,7 +20,7 @@ export const loadApplicationData = async () => {
 };
 
 export const submitApplication = async (
-  applicationData: ApplicationDataProps,
+  applicationData: NewApplicationProps,
 ) => {
   const route: string = `http://localhost:5173/api/applications`;
 

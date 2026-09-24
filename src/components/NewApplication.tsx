@@ -23,7 +23,7 @@ import { Calendar } from "./ui/calendar";
 import { useUser } from "@clerk/react";
 import { submitApplication } from "@/lib/api";
 
-export interface ApplicationDataProps {
+export interface NewApplicationProps {
   clerkId: string;
   companyName?: FormDataEntryValue;
   roleTitle?: FormDataEntryValue;
@@ -33,13 +33,7 @@ export interface ApplicationDataProps {
 }
 
 export const NewApplication = () => {
-  const jobSource: string[] = [
-    "Linkedin",
-    "Referral",
-    "Google",
-    "AI",
-    "Indeed",
-  ];
+  const jobSource: string[] = ["Linkedin", "Referral", "Google", "Indeed"];
 
   const [date, setDate] = useState<Date>();
   const [jobSourceValue, setJobSourceValue] = useState("");
@@ -53,7 +47,7 @@ export const NewApplication = () => {
 
     const formData = new FormData(e.currentTarget);
 
-    const applicationData: ApplicationDataProps = {
+    const applicationData: NewApplicationProps = {
       clerkId: user.id,
       companyName: formData.get("company_name"),
       roleTitle: formData.get("role_title"),

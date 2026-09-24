@@ -1,29 +1,15 @@
-import { NewApplication } from "@/components/NewApplication";
-import { Button } from "@/components/ui/button";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { ApplicationTable } from "@/components/ApplicationTable";
+import { Navbar } from "@/components/Navbar";
+import type { ApplicationDataProps } from "@/lib/ApplicationData";
 import { useLoaderData } from "react-router";
 
 export const Applications = () => {
-  const result = useLoaderData();
+  const result = useLoaderData<ApplicationDataProps>();
 
   return (
     <div className="applications_root">
-      <SidebarProvider>
-        <Sidebar className="applications_nav">
-          <SidebarHeader className="applications_nav_header"></SidebarHeader>
-
-          <SidebarContent>
-            <NewApplication />
-          </SidebarContent>
-          <SidebarFooter></SidebarFooter>
-        </Sidebar>
-      </SidebarProvider>
+      <Navbar />
+      <ApplicationTable applicationName={result.applicationName} />
     </div>
   );
 };

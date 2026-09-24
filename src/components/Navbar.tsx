@@ -3,7 +3,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarProvider,
 } from "@/components/ui/sidebar";
@@ -12,14 +11,12 @@ export const Navbar = () => {
   return (
     <div className="navbar">
       <SidebarProvider>
-        <Sidebar>
-          <SidebarHeader />
+        <Sidebar className="applications_nav">
+          <SidebarHeader className="applications_nav_header"></SidebarHeader>
           <SidebarContent>
-            <SidebarGroup />
-            <SidebarGroupLabel>Applications</SidebarGroupLabel>
-            <SidebarGroup />
+            <SidebarGroup></SidebarGroup>
           </SidebarContent>
-          <SidebarFooter />
+          <SidebarFooter></SidebarFooter>
         </Sidebar>
       </SidebarProvider>
     </div>
