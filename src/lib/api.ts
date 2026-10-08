@@ -1,38 +1,35 @@
-import type { NewApplicationProps } from "@/components/NewApplication";
+import type { JobApplication, NewApplicationProps } from "./types";
 
-export const loadApplicationData = async () => {
-  const route: string = "http://localhost:5173/api/applications";
-  try {
-    const response = await fetch(route, {
-      method: "GET",
-      headers: { "Content-Type": "Application/json" },
-    });
+const BASE_URL = "/api";
 
-    if (!response.ok) {
-      throw new Error("Response failed!");
-    }
-
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
-export const submitApplication = async (
-  applicationData: NewApplicationProps,
+const authFetch = async (
+  path: string,
+  token: string,
+  init: RequestInit = {},
 ) => {
-  const route: string = `http://localhost:5173/api/applications`;
-
-  const response = await fetch(route, {
-    method: "POST",
-    headers: { "Content-Type": "Application/json" },
-    body: JSON.stringify(applicationData),
+  const response = await fetch(`${BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...init.headers,
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create application");
+    throw new Error(`Request failed ${response.status}`);
   }
 
   return response.json();
+};
+
+export const postApplication = (token: string, data: NewApplicationProps) => {
+  authFetch("/applications", token, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+export const getApplications = (token: string): Promise<JobApplication[]> => {
+  return authFetch("/applications", token);
 };

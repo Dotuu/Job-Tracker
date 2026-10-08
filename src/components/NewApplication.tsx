@@ -21,25 +21,30 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import { useUser } from "@clerk/react";
-import { submitApplication } from "@/lib/api";
-
-export interface NewApplicationProps {
-  clerkId: string;
-  companyName?: FormDataEntryValue;
-  roleTitle?: FormDataEntryValue;
-  jobUrl?: FormDataEntryValue;
-  appliedDate?: Date;
-  jobSource?: FormDataEntryValue;
-}
+import type { NewApplicationProps } from "@/lib/types";
+import { useAuthToken } from "@/hooks/use-api";
+import { postApplication } from "@/lib/api";
 
 export const NewApplication = () => {
   const jobSource: string[] = ["Linkedin", "Referral", "Google", "Indeed"];
+  const jobStatus: string[] = [
+    "Applied",
+    "Phone Screen",
+    "Interview",
+    "Offer",
+    "Rejected",
+    "Withdrawn",
+  ];
 
   const [date, setDate] = useState<Date>();
   const [jobSourceValue, setJobSourceValue] = useState("");
+  const [jobStatusValue, setJobStatusValue] = useState("Applied");
   const { user } = useUser();
+  const getAuthToken = useAuthToken();
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!user) {
       throw new Error("User is not authenticated!");
       return;
@@ -48,18 +53,19 @@ export const NewApplication = () => {
     const formData = new FormData(e.currentTarget);
 
     const applicationData: NewApplicationProps = {
-      clerkId: user.id,
-      companyName: formData.get("company_name"),
-      roleTitle: formData.get("role_title"),
-      jobUrl: formData.get("job_url"),
-      appliedDate: date,
+      companyName: String(formData.get("company_name") ?? ""),
+      roleTitle: String(formData.get("role_title") ?? ""),
+      jobUrl: String(formData.get("job_url") ?? ""),
+      appliedDate: date ? format(date, "yyyy-MM-dd") : "",
       jobSource: jobSourceValue,
+      jobStatus: jobStatusValue,
     };
 
     try {
-      await submitApplication(applicationData);
+      const token = await getAuthToken();
+      postApplication(token, applicationData);
     } catch (error) {
-      throw new Error(error);
+      throw new Error("Failed to submit application");
     }
   };
 
@@ -74,18 +80,27 @@ export const NewApplication = () => {
           <FieldSet>
             <Field>
               <FieldLabel htmlFor={"company_name"}>Company Name</FieldLabel>
-              <Input id={"company_name"} placeholder={"Enter Company Name"} />
+              <Input
+                id={"company_name"}
+                name={"company_name"}
+                placeholder={"Enter Company Name"}
+              />
             </Field>
 
             <Field>
               <FieldLabel htmlFor={"role_title"}>Role Title</FieldLabel>
-              <Input id={"role_title"} placeholder={"Enter Role Title"} />
+              <Input
+                id={"role_title"}
+                name={"role_title"}
+                placeholder={"Enter Role Title"}
+              />
             </Field>
 
             <Field>
               <FieldLabel htmlFor={"job_url"}>Company Website</FieldLabel>
               <Input
                 id={"job_url"}
+                name={"job_url"}
                 placeholder={"Enter a link to the companies website"}
               />
             </Field>
@@ -124,9 +139,35 @@ export const NewApplication = () => {
                 <Combobox
                   id={"job_source"}
                   items={jobSource}
-                  onValueChange={setJobSourceValue}
+                  onValueChange={(value: string | null) =>
+                    setJobSourceValue(value ?? "")
+                  }
                 >
                   <ComboboxInput placeholder={"Where was this job listed?"} />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      {(item) => (
+                        <ComboboxItem key={item} value={item}>
+                          {item}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor={"job_status"}>
+                  What is the current job status?
+                </FieldLabel>
+                <Combobox
+                  id={"job_status"}
+                  items={jobStatus}
+                  onValueChange={(value: string | null) =>
+                    setJobStatusValue(value ?? "")
+                  }
+                >
+                  <ComboboxInput placeholder={"Current job status"} />
                   <ComboboxContent>
                     <ComboboxList>
                       {(item) => (

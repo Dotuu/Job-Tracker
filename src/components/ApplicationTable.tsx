@@ -1,14 +1,18 @@
-import type { ApplicationDataProps } from "@/lib/ApplicationData";
-import type { NewApplicationProps } from "./NewApplication";
+import type { JobApplication } from "@/lib/types";
 import {
   Table,
   TableCaption,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "./ui/table";
 
-export const ApplicationTable = ({ applicationName }: ApplicationDataProps) => {
+interface JobApplicationProps {
+  applicationData: JobApplication[];
+}
+
+export const ApplicationTable = ({ applicationData }: JobApplicationProps) => {
   return (
     <div className="application_table">
       <Table>
@@ -16,11 +20,24 @@ export const ApplicationTable = ({ applicationName }: ApplicationDataProps) => {
         <TableHeader>
           <TableRow>
             <TableHead>Company Name</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Date Applied</TableHead>
+            <TableHead>Location</TableHead>
+            <TableHead>Source</TableHead>
             <TableHead>Notes</TableHead>
-            <TableHead>Application Status</TableHead>
-            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
+        {applicationData.map((application) => (
+          <TableRow key={application.jobId}>
+            <TableCell>{application.companyName}</TableCell>
+            <TableCell>{application.roleTitle}</TableCell>
+            <TableCell>{application.jobStatus}</TableCell>
+            <TableCell>{application.appliedDate}</TableCell>
+            <TableCell>{application.jobSource}</TableCell>
+            <TableCell>{application.notes}</TableCell>
+          </TableRow>
+        ))}
       </Table>
     </div>
   );
