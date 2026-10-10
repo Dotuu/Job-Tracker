@@ -1,19 +1,20 @@
 export interface JobApplication {
-  jobId: number;
+  id: number;
   companyName: string;
   roleTitle: string;
   jobUrl?: string;
-  appliedDate?: string;
-  jobSource?: string;
-  jobStatus: string;
+  status: string;
+  dateApplied?: string;
+  dateRejected?: string;
   notes: string;
+  source?: string;
 }
 
 export interface NewApplicationProps {
   companyName: string;
   roleTitle: string;
   jobUrl?: string;
-  appliedDate?: string;
-  jobSource?: string;
-  jobStatus: string;
+  dateApplied?: string;
+  source?: string;
+  status: string;
 }

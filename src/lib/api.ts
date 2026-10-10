@@ -1,6 +1,6 @@
 import type { JobApplication, NewApplicationProps } from "./types";
 
-const BASE_URL = "/api";
+const BASE_URL = "http://localhost:8080/api";
 
 const authFetch = async (
   path: string,
@@ -23,8 +23,11 @@ const authFetch = async (
   return response.json();
 };
 
-export const postApplication = (token: string, data: NewApplicationProps) => {
-  authFetch("/applications", token, {
+export const postApplication = (
+  token: string,
+  data: NewApplicationProps,
+): Promise<JobApplication> => {
+  return authFetch("/applications", token, {
     method: "POST",
     body: JSON.stringify(data),
   });

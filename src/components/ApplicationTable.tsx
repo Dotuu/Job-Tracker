@@ -29,12 +29,12 @@ export const ApplicationTable = ({ applicationData }: JobApplicationProps) => {
           </TableRow>
         </TableHeader>
         {applicationData.map((application) => (
-          <TableRow key={application.jobId}>
+          <TableRow key={application.id}>
             <TableCell>{application.companyName}</TableCell>
             <TableCell>{application.roleTitle}</TableCell>
-            <TableCell>{application.jobStatus}</TableCell>
-            <TableCell>{application.appliedDate}</TableCell>
-            <TableCell>{application.jobSource}</TableCell>
+            <TableCell>{application.status}</TableCell>
+            <TableCell>{application.dateApplied}</TableCell>
+            <TableCell>{application.source}</TableCell>
             <TableCell>{application.notes}</TableCell>
           </TableRow>
         ))}

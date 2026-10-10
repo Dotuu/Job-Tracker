@@ -36,6 +36,10 @@ export const NewApplication = () => {
     "Withdrawn",
   ];
 
+  const convertToEnumValue = (str: string): string => {
+    return str.toUpperCase().replace(" ", "_");
+  };
+
   const [date, setDate] = useState<Date>();
   const [jobSourceValue, setJobSourceValue] = useState("");
   const [jobStatusValue, setJobStatusValue] = useState("Applied");
@@ -56,9 +60,9 @@ export const NewApplication = () => {
       companyName: String(formData.get("company_name") ?? ""),
       roleTitle: String(formData.get("role_title") ?? ""),
       jobUrl: String(formData.get("job_url") ?? ""),
-      appliedDate: date ? format(date, "yyyy-MM-dd") : "",
-      jobSource: jobSourceValue,
-      jobStatus: jobStatusValue,
+      dateApplied: date ? format(date, "yyyy-MM-dd") : "",
+      source: jobSourceValue,
+      status: convertToEnumValue(jobStatusValue),
     };
 
     try {
