@@ -40,18 +40,91 @@ export const NewApplication = () => {
     return str.toUpperCase().replace(" ", "_");
   };
 
+  const [errors, setErrors] = useState({
+    status: false,
+    companyName: false,
+    roleTitle: false,
+  });
+
+  const validateForm = (data: NewApplicationProps): boolean => {
+    let validate: boolean = true;
+
+    if (data.dateApplied == "" || data.dateApplied == null) {
+      data.dateApplied = format(Date.now(), "yyyy-MM-dd");
+    }
+
+    if (data.status == "" || data.status == null) {
+      setErrors((prev) => ({
+        ...prev,
+        roleTitle: true,
+      }));
+
+      validate = false;
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        roleTitle: false,
+      }));
+    }
+
+    if (data.status == "" || data.status == null) {
+      setErrors((prev) => ({
+        ...prev,
+        status: true,
+      }));
+
+      validate = false;
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        status: false,
+      }));
+    }
+
+    if (data.companyName == "" || data.companyName == null) {
+      setErrors((prev) => ({
+        ...prev,
+        companyName: true,
+      }));
+
+      validate = false;
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        companyName: false,
+      }));
+    }
+
+    return validate;
+  };
+
   const [date, setDate] = useState<Date>();
   const [jobSourceValue, setJobSourceValue] = useState("");
-  const [jobStatusValue, setJobStatusValue] = useState("Applied");
+  const [jobStatusValue, setJobStatusValue] = useState("");
+  const [open, setOpen] = useState(false);
   const { user } = useUser();
   const getAuthToken = useAuthToken();
+
+  const resetForm = () => {
+    setDate(undefined);
+    setJobSourceValue("");
+    setJobStatusValue("");
+    setErrors({ status: false, companyName: false, roleTitle: false });
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      resetForm();
+    }
+
+    setOpen(nextOpen);
+  };
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!user) {
       throw new Error("User is not authenticated!");
-      return;
     }
 
     const formData = new FormData(e.currentTarget);
@@ -67,14 +140,18 @@ export const NewApplication = () => {
 
     try {
       const token = await getAuthToken();
-      postApplication(token, applicationData);
+
+      if (validateForm(applicationData)) {
+        postApplication(token, applicationData);
+        setOpen(false);
+      }
     } catch (error) {
       throw new Error("Failed to submit application");
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button>New Application</Button>} />
       <DialogContent>
         <DialogHeader>
@@ -82,21 +159,23 @@ export const NewApplication = () => {
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <FieldSet>
-            <Field>
+            <Field data-invalid={errors.companyName}>
               <FieldLabel htmlFor={"company_name"}>Company Name</FieldLabel>
               <Input
                 id={"company_name"}
                 name={"company_name"}
                 placeholder={"Enter Company Name"}
+                aria-invalid={errors.companyName}
               />
             </Field>
 
-            <Field>
+            <Field data-invalid={errors.roleTitle}>
               <FieldLabel htmlFor={"role_title"}>Role Title</FieldLabel>
               <Input
                 id={"role_title"}
                 name={"role_title"}
                 placeholder={"Enter Role Title"}
+                aria-invalid={errors.roleTitle}
               />
             </Field>
 
@@ -160,7 +239,7 @@ export const NewApplication = () => {
                 </Combobox>
               </Field>
 
-              <Field>
+              <Field data-invalid={errors.status}>
                 <FieldLabel htmlFor={"job_status"}>
                   What is the current job status?
                 </FieldLabel>
@@ -171,7 +250,10 @@ export const NewApplication = () => {
                     setJobStatusValue(value ?? "")
                   }
                 >
-                  <ComboboxInput placeholder={"Current job status"} />
+                  <ComboboxInput
+                    placeholder={"Current job status"}
+                    aria-invalid={errors.status}
+                  />
                   <ComboboxContent>
                     <ComboboxList>
                       {(item) => (
