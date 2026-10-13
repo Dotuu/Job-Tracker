@@ -18,3 +18,11 @@ export interface NewApplicationProps {
   source?: string;
   status: string;
 }
+
+export interface DeleteApplicationProps {
+  applicationId: number;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onClose: () => void;
+  onDeleted: (id: number) => void;
+}

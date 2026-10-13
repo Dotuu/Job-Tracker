@@ -40,10 +40,28 @@ export const Applications = () => {
     };
   }, [isLoaded, isSignedIn, getAuthToken]);
 
+  const handleCreated = (application: JobApplication) => {
+    setApplications((prev) => [...prev, application]);
+  };
+
+  const handleUpdated = (updated: JobApplication) => {
+    setApplications((prev) =>
+      prev.map((app) => (app.id === updated.id ? updated : app)),
+    );
+  };
+
+  const handleDeleted = (id: number) => {
+    setApplications((prev) => prev.filter((app) => app.id !== id));
+  };
+
   return (
     <div className="applications_root">
-      <Navbar />
-      <ApplicationTable applicationData={applications} />
+      <Navbar onCreated={handleCreated} />
+      <ApplicationTable
+        applicationData={applications}
+        onDeleted={handleDeleted}
+        onUpdated={handleUpdated}
+      />
     </div>
   );
 };

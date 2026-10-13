@@ -20,6 +20,13 @@ const authFetch = async (
     throw new Error(`Request failed ${response.status}`);
   }
 
+  if (
+    response.status == 204 ||
+    response.headers.get("content-length") === "0"
+  ) {
+    return null;
+  }
+
   return response.json();
 };
 
@@ -35,4 +42,21 @@ export const postApplication = (
 
 export const getApplications = (token: string): Promise<JobApplication[]> => {
   return authFetch("/applications", token);
+};
+
+export const updateApplication = (
+  token: string,
+  applicationId: number,
+  data: NewApplicationProps,
+): Promise<JobApplication> => {
+  return authFetch(`/applications/${applicationId}`, token, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+};
+
+export const deleteApplication = (token: string, applicationId: number) => {
+  return authFetch(`/applications/${applicationId}`, token, {
+    method: "DELETE",
+  });
 };
