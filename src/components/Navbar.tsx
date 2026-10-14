@@ -5,7 +5,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarProvider,
 } from "@/components/ui/sidebar";
 import { NewApplication } from "./NewApplication";
 import {
@@ -13,10 +12,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { ChevronDown } from "lucide-react";
+import { BriefcaseBusinessIcon, ChevronDown, LogOutIcon } from "lucide-react";
 import type { JobApplication } from "@/lib/types";
 import { Show, SignOutButton } from "@clerk/react";
 import { Button } from "./ui/button";
+import "./Navbar.scss";
 
 export const Navbar = ({
   onCreated,
@@ -24,35 +24,38 @@ export const Navbar = ({
   onCreated: (application: JobApplication) => void;
 }) => {
   return (
-    <div className="navbar">
-      <SidebarProvider>
-        <Sidebar className="applications_nav">
-          <SidebarHeader className="applications_nav_header"></SidebarHeader>
-          <SidebarContent>
-            <Collapsible defaultOpen className="group/collapsible">
-              <SidebarGroup className="group_applications">
-                <Show when="signed-in">
-                  <SignOutButton>
-                    <Button id={"nav_btn_signout"}>Sign Out</Button>
-                  </SignOutButton>
-                </Show>
-              </SidebarGroup>
-            </Collapsible>
-            <Collapsible defaultOpen className="group/collapsible">
-              <SidebarGroup className="group_applications">
-                <SidebarGroupLabel render={<CollapsibleTrigger />}>
-                  Applications
-                  <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
-                </SidebarGroupLabel>
-                <CollapsibleContent>
-                  <NewApplication onCreated={onCreated} />
-                </CollapsibleContent>
-              </SidebarGroup>
-            </Collapsible>
-          </SidebarContent>
-          <SidebarFooter></SidebarFooter>
-        </Sidebar>
-      </SidebarProvider>
-    </div>
+    <Sidebar className="applications_nav">
+      <SidebarHeader className="applications_nav_header">
+        <div className="nav_brand">
+          <span className="nav_brand_icon">
+            <BriefcaseBusinessIcon />
+          </span>
+          <span className="nav_brand_name">JobTracker</span>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup className="group_applications">
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              Applications
+              <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
+            </SidebarGroupLabel>
+            <CollapsibleContent className="nav_group_content">
+              <NewApplication onCreated={onCreated} />
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
+      </SidebarContent>
+      <SidebarFooter className="applications_nav_footer">
+        <Show when="signed-in">
+          <SignOutButton>
+            <Button id={"nav_btn_signout"} variant="outline">
+              <LogOutIcon />
+              Sign Out
+            </Button>
+          </SignOutButton>
+        </Show>
+      </SidebarFooter>
+    </Sidebar>
   );
 };

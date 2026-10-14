@@ -1,0 +1,56 @@
+.applications_nav_header {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.nav_brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.nav_brand_icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: calc(var(--radius) * 0.8);
+  background: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+
+  svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+.nav_brand_name {
+  font-family: "Figtree Variable", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--sidebar-foreground);
+}
+
+.nav_group_content {
+  padding: 0.25rem 0.5rem;
+
+  // the "New Application" dialog trigger
+  > button {
+    width: 100%;
+  }
+}
+
+.applications_nav_footer {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--sidebar-border);
+
+  #nav_btn_signout {
+    width: 100%;
+    justify-content: flex-start;
+    color: var(--muted-foreground);
+
+    &:hover {
+      color: var(--sidebar-foreground);
+    }
+  }
+}

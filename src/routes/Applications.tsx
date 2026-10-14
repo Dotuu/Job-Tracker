@@ -5,12 +5,26 @@ import { getApplications } from "@/lib/api";
 import type { JobApplication } from "@/lib/types";
 import { useAuth } from "@clerk/react";
 import { useEffect, useState } from "react";
+import "./Applications.scss";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 
 export const Applications = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const getAuthToken = useAuthToken();
   const [applications, setApplications] = useState<JobApplication[]>([]);
-  const [error, setError] = useState<String | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Dark theme for this page only. Set on <html> (not a wrapper div) so
+  // dialogs/dropdowns portaled to <body> pick up the .dark tokens too.
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+    return () => document.documentElement.classList.remove("dark");
+  }, []);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
@@ -55,13 +69,37 @@ export const Applications = () => {
   };
 
   return (
-    <div className="applications_root">
+    <SidebarProvider>
       <Navbar onCreated={handleCreated} />
-      <ApplicationTable
-        applicationData={applications}
-        onDeleted={handleDeleted}
-        onUpdated={handleUpdated}
-      />
-    </div>
+      <SidebarInset>
+        <header className="applications_header">
+          <SidebarTrigger />
+          <Separator
+            orientation="vertical"
+            className="applications_header_sep"
+          />
+          <span className="applications_header_crumb">Applications</span>
+        </header>
+
+        <section className="applications_content">
+          <div className="applications_title">
+            <h1>Applications</h1>
+            <p>
+              {applications.length}{" "}
+              {applications.length === 1 ? "application" : "applications"}{" "}
+              tracked
+            </p>
+          </div>
+
+          {error && <div className="applications_error">{error}</div>}
+
+          <ApplicationTable
+            applicationData={applications}
+            onDeleted={handleDeleted}
+            onUpdated={handleUpdated}
+          />
+        </section>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
