@@ -8,6 +8,8 @@ export interface JobApplication {
   dateRejected?: string;
   notes: string;
   source?: string;
+  location?: string;
+  locationType: string;
 }
 
 export interface NewApplicationProps {
@@ -17,6 +19,8 @@ export interface NewApplicationProps {
   dateApplied?: string;
   source?: string;
   status: string;
+  location?: string;
+  locationType?: string;
 }
 
 export interface DeleteApplicationProps {

@@ -1,10 +1,5 @@
 import type { JobApplication, NewApplicationProps } from "@/lib/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { ApplicationForm } from "./ApplicationForm";
 import { useAuthToken } from "@/hooks/use-api";
 import { updateApplication } from "@/lib/api";

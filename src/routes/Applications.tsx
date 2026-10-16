@@ -19,8 +19,6 @@ export const Applications = () => {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Dark theme for this page only. Set on <html> (not a wrapper div) so
-  // dialogs/dropdowns portaled to <body> pick up the .dark tokens too.
   useEffect(() => {
     document.documentElement.classList.add("dark");
     return () => document.documentElement.classList.remove("dark");

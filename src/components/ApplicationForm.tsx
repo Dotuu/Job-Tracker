@@ -1,5 +1,12 @@
 import type { NewApplicationProps } from "@/lib/types";
-import { Field, FieldLabel, FieldSet } from "./ui/field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldSet,
+  FieldTitle,
+} from "./ui/field";
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
@@ -13,7 +20,14 @@ import {
   ComboboxList,
 } from "./ui/combobox";
 import { Button } from "./ui/button";
-import { CalendarIcon } from "lucide-react";
+import {
+  ArrowRightLeft,
+  BuildingComplex,
+  CalendarIcon,
+  House,
+} from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
 
 interface ApplicationFormProps {
   initialValues?: NewApplicationProps;
@@ -40,6 +54,7 @@ export const ApplicationForm = ({
     status: false,
     companyName: false,
     roleTitle: false,
+    locationType: false,
   });
 
   const convertToEnumValue = (str: string): string => {
@@ -66,6 +81,14 @@ export const ApplicationForm = ({
     initialValues?.status ? convertFromEnumValue(initialValues.status) : "",
   );
 
+  const [hideLocation, setHideLocation] = useState(
+    !initialValues?.locationType || initialValues.locationType === "REMOTE",
+  );
+
+  const locationCardClass = errors.locationType
+    ? "border-destructive"
+    : undefined;
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -78,6 +101,10 @@ export const ApplicationForm = ({
       dateApplied: date ? format(date, "yyyy-MM-dd") : "",
       source: jobSourceValue,
       status: convertToEnumValue(jobStatusValue),
+      location: String(formData.get("job_location") ?? ""),
+      locationType: convertToEnumValue(
+        String(formData.get("job_location_radio") ?? ""),
+      ),
     };
 
     try {
@@ -138,7 +165,34 @@ export const ApplicationForm = ({
       }));
     }
 
+    if (data.locationType == "" || data.locationType == null) {
+      setErrors((prev) => ({
+        ...prev,
+        locationType: true,
+      }));
+
+      validate = false;
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        locationType: false,
+      }));
+    }
+
     return validate;
+  };
+
+  const onLocationSelect = (val: string) => {
+    updateError("locationType", val);
+    if (val === "REMOTE") {
+      setHideLocation(true);
+      return;
+    }
+    setHideLocation(false);
+  };
+
+  const updateError = (field: keyof typeof errors, value: string) => {
+    setErrors((prev) => ({ ...prev, [field]: value.trim() === "" }));
   };
 
   return (
@@ -152,6 +206,7 @@ export const ApplicationForm = ({
             placeholder={"Enter Company Name"}
             defaultValue={initialValues?.companyName}
             aria-invalid={errors.companyName}
+            onChange={(e) => updateError("companyName", e.target.value)}
           />
         </Field>
 
@@ -163,6 +218,7 @@ export const ApplicationForm = ({
             placeholder={"Enter Role Title"}
             defaultValue={initialValues?.roleTitle}
             aria-invalid={errors.roleTitle}
+            onChange={(e) => updateError("roleTitle", e.target.value)}
           />
         </Field>
 
@@ -175,87 +231,138 @@ export const ApplicationForm = ({
             defaultValue={initialValues?.jobUrl}
           />
         </Field>
+        <Label
+          htmlFor={"job_location_radio"}
+          className={errors.locationType ? "text-destructive" : undefined}
+        >
+          Job Location
+        </Label>
+        <RadioGroup
+          id={"job_location_radio"}
+          name={"job_location_radio"}
+          defaultValue={initialValues?.locationType}
+          onValueChange={onLocationSelect}
+        >
+          <FieldLabel htmlFor={"remote"} className={locationCardClass}>
+            <Field orientation={"horizontal"}>
+              <FieldContent>
+                <FieldTitle>Remote {<House />}</FieldTitle>
+                <FieldDescription>Jobs that is fully remote</FieldDescription>
+              </FieldContent>
+              <RadioGroupItem value="REMOTE" id="remote" />
+            </Field>
+          </FieldLabel>
 
-        <div className="application_form_group">
-          <Field>
-            <FieldLabel htmlFor={"applied_date"}>
-              Enter date you applied
-            </FieldLabel>
-            <Popover>
-              <PopoverTrigger
-                id={"applied_date"}
-                render={<Button data-empty={!date} />}
-              >
-                <CalendarIcon />
-                {date ? (
-                  format(date, "PPP")
-                ) : (
-                  <span>Select date you applied</span>
+          <FieldLabel htmlFor={"hybrid"} className={locationCardClass}>
+            <Field orientation={"horizontal"}>
+              <FieldContent>
+                <FieldTitle>Hybrid {<ArrowRightLeft />}</FieldTitle>
+                <FieldDescription>
+                  Jobs that are a mix of remote & on-site
+                </FieldDescription>
+              </FieldContent>
+              <RadioGroupItem value="HYBRID" id="hybrid" />
+            </Field>
+          </FieldLabel>
+
+          <FieldLabel htmlFor={"on_site"} className={locationCardClass}>
+            <Field orientation={"horizontal"}>
+              <FieldContent>
+                <FieldTitle>On-Site {<BuildingComplex />}</FieldTitle>
+                <FieldDescription>Jobs that are fully on-site</FieldDescription>
+              </FieldContent>
+              <RadioGroupItem value="ON_SITE" id="on_site" />
+            </Field>
+          </FieldLabel>
+        </RadioGroup>
+
+        <Field hidden={hideLocation}>
+          <Input
+            id={"job_location"}
+            name={"job_location"}
+            placeholder={"Enter job location"}
+            defaultValue={initialValues?.location}
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor={"applied_date"}>
+            Enter date you applied
+          </FieldLabel>
+          <Popover>
+            <PopoverTrigger
+              id={"applied_date"}
+              render={<Button data-empty={!date} />}
+            >
+              <CalendarIcon />
+              {date ? (
+                format(date, "PPP")
+              ) : (
+                <span>Select date you applied</span>
+              )}
+            </PopoverTrigger>
+            <PopoverContent>
+              <Calendar mode={"single"} selected={date} onSelect={setDate} />
+            </PopoverContent>
+          </Popover>
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor={"job_source"}>
+            Where did you see this job posted?
+          </FieldLabel>
+          <Combobox
+            id={"job_source"}
+            items={jobSource}
+            defaultValue={jobSourceValue || null}
+            onValueChange={(value: string | null) =>
+              setJobSourceValue(value ?? "")
+            }
+          >
+            <ComboboxInput placeholder={"Where was this job listed?"} />
+            <ComboboxContent>
+              <ComboboxList>
+                {(item) => (
+                  <ComboboxItem key={item} value={item}>
+                    {item}
+                  </ComboboxItem>
                 )}
-              </PopoverTrigger>
-              <PopoverContent>
-                <Calendar mode={"single"} selected={date} onSelect={setDate} />
-              </PopoverContent>
-            </Popover>
-          </Field>
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </Field>
 
-          <Field>
-            <FieldLabel htmlFor={"job_source"}>
-              Where did you see this job posted?
-            </FieldLabel>
-            <Combobox
-              id={"job_source"}
-              items={jobSource}
-              defaultValue={jobSourceValue || null}
-              onValueChange={(value: string | null) =>
-                setJobSourceValue(value ?? "")
-              }
-            >
-              <ComboboxInput placeholder={"Where was this job listed?"} />
-              <ComboboxContent>
-                <ComboboxList>
-                  {(item) => (
-                    <ComboboxItem key={item} value={item}>
-                      {item}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          </Field>
+        <Field data-invalid={errors.status}>
+          <FieldLabel htmlFor={"job_status"}>
+            What is the current job status?
+          </FieldLabel>
+          <Combobox
+            id={"job_status"}
+            items={jobStatus}
+            defaultValue={jobStatusValue || null}
+            onValueChange={(value: string | null) => {
+              setJobStatusValue(value ?? "");
+              updateError("status", value ?? "");
+            }}
+          >
+            <ComboboxInput
+              placeholder={"Current job status"}
+              aria-invalid={errors.status}
+            />
+            <ComboboxContent>
+              <ComboboxList>
+                {(item) => (
+                  <ComboboxItem key={item} value={item}>
+                    {item}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </Field>
 
-          <Field data-invalid={errors.status}>
-            <FieldLabel htmlFor={"job_status"}>
-              What is the current job status?
-            </FieldLabel>
-            <Combobox
-              id={"job_status"}
-              items={jobStatus}
-              defaultValue={jobStatusValue || null}
-              onValueChange={(value: string | null) =>
-                setJobStatusValue(value ?? "")
-              }
-            >
-              <ComboboxInput
-                placeholder={"Current job status"}
-                aria-invalid={errors.status}
-              />
-              <ComboboxContent>
-                <ComboboxList>
-                  {(item) => (
-                    <ComboboxItem key={item} value={item}>
-                      {item}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          </Field>
-
-          <Field>
-            <Button type={"submit"}>{submitLabel}</Button>
-          </Field>
-        </div>
+        <Field>
+          <Button type={"submit"}>{submitLabel}</Button>
+        </Field>
       </FieldSet>
     </form>
   );

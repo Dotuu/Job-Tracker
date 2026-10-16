@@ -9,8 +9,16 @@ import {
 } from "./ui/table";
 import { ApplicationTableMenu } from "./ApplicationTableMenu";
 import { format, parseISO } from "date-fns";
-import { BriefcaseBusinessIcon } from "lucide-react";
+import {
+  ArrowRightLeft,
+  BriefcaseBusinessIcon,
+  BuildingComplex,
+  House,
+  type LucideIcon,
+} from "lucide-react";
 import "./ApplicationTable.scss";
+import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface JobApplicationProps {
   applicationData: JobApplication[];
@@ -18,9 +26,8 @@ interface JobApplicationProps {
   onUpdated: (application: JobApplication) => void;
 }
 
-// "PHONE_SCREEN" -> "Phone Screen"
-const formatStatus = (status: string) =>
-  status
+const formatEnum = (value: string) =>
+  value
     .toLowerCase()
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -28,6 +35,58 @@ const formatStatus = (status: string) =>
 
 const formatDate = (date?: string) =>
   date ? format(parseISO(date), "MMM d, yyyy") : "—";
+
+const LOCATION_ICONS: Record<string, LucideIcon> = {
+  REMOTE: House,
+  HYBRID: ArrowRightLeft,
+  ON_SITE: BuildingComplex,
+};
+
+const LocationPill = ({
+  locationType,
+  location,
+}: {
+  locationType?: string;
+  location?: string;
+}) => {
+  const [copied, setCopied] = useState(false);
+
+  if (!locationType) return "—";
+  const Icon = LOCATION_ICONS[locationType];
+  const content = (
+    <>
+      {Icon && <Icon />}
+      {formatEnum(locationType)}
+    </>
+  );
+
+  if (locationType === "REMOTE" || !location?.trim()) {
+    return <span className="location_pill">{content}</span>;
+  }
+
+  const copyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(location);
+      setCopied(true);
+    } catch {}
+  };
+
+  return (
+    <Tooltip onOpenChange={(open) => !open && setCopied(false)}>
+      <TooltipTrigger
+        className="location_pill location_pill_copyable"
+        delay={200}
+        closeOnClick={false}
+        onClick={copyAddress}
+      >
+        {content}
+      </TooltipTrigger>
+      <TooltipContent>
+        {copied ? "Copied!" : `${location} · Click to copy`}
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
 export const ApplicationTable = ({
   applicationData,
@@ -83,13 +142,18 @@ export const ApplicationTable = ({
                 <span
                   className={`status_pill status_${application.status.toLowerCase()}`}
                 >
-                  {formatStatus(application.status)}
+                  {formatEnum(application.status)}
                 </span>
               </TableCell>
               <TableCell className="table_muted">
                 {formatDate(application.dateApplied)}
               </TableCell>
-              <TableCell className="table_muted">—</TableCell>
+              <TableCell className="table_muted">
+                <LocationPill
+                  locationType={application.locationType}
+                  location={application.location}
+                />
+              </TableCell>
               <TableCell className="table_muted">
                 {application.source || "—"}
               </TableCell>
