@@ -60,3 +60,13 @@ export const deleteApplication = (token: string, applicationId: number) => {
     method: "DELETE",
   });
 };
+
+export const searchApplication = (token: string, params: string) => {
+  return authFetch(
+    `/applications/search?value=${encodeURIComponent(params)}`,
+    token,
+    {
+      method: "GET",
+    },
+  );
+};

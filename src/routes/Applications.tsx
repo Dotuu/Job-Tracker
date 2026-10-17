@@ -1,10 +1,11 @@
 import { ApplicationTable } from "@/components/ApplicationTable";
 import { Navbar } from "@/components/Navbar";
 import { useAuthToken } from "@/hooks/use-api";
-import { getApplications } from "@/lib/api";
+import { getApplications, searchApplication } from "@/lib/api";
 import type { JobApplication } from "@/lib/types";
 import { useAuth } from "@clerk/react";
 import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import "./Applications.scss";
 import {
   SidebarInset,
@@ -12,12 +13,22 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { ApplicationSearch } from "@/components/ApplicationSearch";
 
 export const Applications = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const getAuthToken = useAuthToken();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const handleSearch = useDebouncedCallback(async (query: string) => {
+    const token = await getAuthToken();
+    setApplications(
+      query.trim() === ""
+        ? await getApplications(token)
+        : await searchApplication(token, query.trim()),
+    );
+  }, 200);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -88,6 +99,8 @@ export const Applications = () => {
               tracked
             </p>
           </div>
+
+          <ApplicationSearch onSearchChange={handleSearch} />
 
           {error && <div className="applications_error">{error}</div>}
 
