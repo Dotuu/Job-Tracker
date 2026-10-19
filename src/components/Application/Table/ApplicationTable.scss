@@ -24,6 +24,33 @@
   }
 }
 
+.sortable_head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sort_button {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--muted-foreground);
+  transition: color 150ms, background-color 150ms;
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--foreground);
+  }
+}
+
+.sort_button_active {
+  color: var(--foreground);
+}
+
 .table_company {
   font-weight: 500;
   color: var(--foreground);

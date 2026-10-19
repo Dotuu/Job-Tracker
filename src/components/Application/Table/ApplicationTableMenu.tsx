@@ -1,13 +1,13 @@
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 import { EllipsisVerticalIcon, SquarePenIcon, TrashIcon } from "lucide-react";
-import { DeleteApplicationPopup } from "./DeleteApplicationPopup";
-import { EditApplicationPopup } from "./EditApplicationPopup";
+import { DeleteApplicationPopup } from "../../DeleteApplicationPopup";
+import { EditApplicationPopup } from "../../EditApplicationPopup";
 import { useState } from "react";
 import type { JobApplication } from "@/lib/types";
 

@@ -1,7 +1,7 @@
 import { Show, SignInButton, SignOutButton, useAuth } from "@clerk/react";
-import { Button } from "./ui/button";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export const HomePage = () => {
   const goToAbout = () => {

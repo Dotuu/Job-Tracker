@@ -1,7 +1,7 @@
-import { ApplicationTable } from "@/components/ApplicationTable";
+import { ApplicationTable } from "@/components/Application/Table/ApplicationTable";
 import { Navbar } from "@/components/Navbar";
 import { useAuthToken } from "@/hooks/use-api";
-import { getApplications, searchApplication } from "@/lib/api";
+import { getApplications, searchApplication, updateNotes } from "@/lib/api";
 import type { JobApplication } from "@/lib/types";
 import { useAuth } from "@clerk/react";
 import { useEffect, useState } from "react";
@@ -73,6 +73,18 @@ export const Applications = () => {
     );
   };
 
+  const handleNotesUpdate = async (id: number, notes: string) => {
+    try {
+      const token = await getAuthToken();
+      await updateNotes(token, id, notes);
+      setApplications((prev) =>
+        prev.map((app) => (app.id === id ? { ...app, notes } : app)),
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
   const handleDeleted = (id: number) => {
     setApplications((prev) => prev.filter((app) => app.id !== id));
   };
@@ -91,16 +103,17 @@ export const Applications = () => {
         </header>
 
         <section className="applications_content">
-          <div className="applications_title">
-            <h1>Applications</h1>
-            <p>
-              {applications.length}{" "}
-              {applications.length === 1 ? "application" : "applications"}{" "}
-              tracked
-            </p>
+          <div className="applications_header_group">
+            <div className="applications_title">
+              <h1>Applications</h1>
+              <p>
+                {applications.length}{" "}
+                {applications.length === 1 ? "application" : "applications"}{" "}
+                tracked
+              </p>
+            </div>
+            <ApplicationSearch onSearchChange={handleSearch} />
           </div>
-
-          <ApplicationSearch onSearchChange={handleSearch} />
 
           {error && <div className="applications_error">{error}</div>}
 
@@ -108,6 +121,7 @@ export const Applications = () => {
             applicationData={applications}
             onDeleted={handleDeleted}
             onUpdated={handleUpdated}
+            onNotesUpdate={handleNotesUpdate}
           />
         </section>
       </SidebarInset>

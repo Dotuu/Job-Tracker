@@ -1,7 +1,7 @@
 import { ClerkLoaded, ClerkLoading } from "@clerk/react";
 import "./App.css";
 import { Skeleton } from "./components/ui/skeleton";
-import { HomePage } from "./components/HomePage";
+import { HomePage } from "./routes/HomePage";
 
 function App() {
   return (

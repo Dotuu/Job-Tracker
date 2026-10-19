@@ -40,6 +40,17 @@ export const postApplication = (
   });
 };
 
+export const updateNotes = (
+  token: string,
+  applicationId: number,
+  notes: string,
+): Promise<JobApplication> => {
+  return authFetch(`/applications/${applicationId}/notes`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ notes }),
+  });
+};
+
 export const getApplications = (token: string): Promise<JobApplication[]> => {
   return authFetch("/applications", token);
 };

@@ -1,6 +1,6 @@
 import type { JobApplication, NewApplicationProps } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import { ApplicationForm } from "./ApplicationForm";
+import { ApplicationForm } from "./Application/Form/ApplicationForm";
 import { useAuthToken } from "@/hooks/use-api";
 import { updateApplication } from "@/lib/api";
 

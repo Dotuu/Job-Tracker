@@ -6,24 +6,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { ApplicationTableMenu } from "./ApplicationTableMenu";
+} from "../../ui/table";
+import { ApplicationTableMenu } from "../Table/ApplicationTableMenu";
 import { format, parseISO } from "date-fns";
 import {
+  ArrowDown,
   ArrowRightLeft,
+  ArrowUp,
+  ArrowUpDown,
   BriefcaseBusinessIcon,
   BuildingComplex,
   House,
+  NotebookPen,
   type LucideIcon,
 } from "lucide-react";
 import "./ApplicationTable.scss";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
+import { ApplicationNotesMenu } from "../../ApplicationNotesMenu";
+import { Button } from "../../ui/button";
 
 interface JobApplicationProps {
   applicationData: JobApplication[];
   onDeleted: (id: number) => void;
   onUpdated: (application: JobApplication) => void;
+  onNotesUpdate: (id: number, notes: string) => void;
 }
 
 const formatEnum = (value: string) =>
@@ -88,20 +95,81 @@ const LocationPill = ({
   );
 };
 
+const SortableHead = ({
+  label,
+  column,
+  sortedCol,
+  asc,
+  onSort,
+}: {
+  label: string;
+  column: keyof JobApplication;
+  sortedCol: keyof JobApplication | null;
+  asc: boolean;
+  onSort: (column: keyof JobApplication) => void;
+}) => {
+  const active = sortedCol === column;
+  const Icon = !active ? ArrowUpDown : asc ? ArrowUp : ArrowDown;
+
+  return (
+    <TableHead>
+      <span className="sortable_head">
+        {label}
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className={`sort_button${active ? " sort_button_active" : ""}`}
+          aria-label={`Sort by ${label}`}
+          onClick={() => onSort(column)}
+        >
+          <Icon />
+        </Button>
+      </span>
+    </TableHead>
+  );
+};
+
 export const ApplicationTable = ({
   applicationData,
   onDeleted,
   onUpdated,
+  onNotesUpdate,
 }: JobApplicationProps) => {
+  const [openNotesId, setOpenNotesId] = useState<number | null>(null);
+  const [sortedCol, setSortedCol] = useState<keyof JobApplication | null>(null);
+  const [asc, setAsc] = useState(true);
+
+  const sortedData = sortedCol
+    ? [...applicationData].sort((a, b) => {
+        const cmp = String(a[sortedCol]).localeCompare(String(b[sortedCol]));
+        return asc ? cmp : -cmp;
+      })
+    : applicationData;
+
+  const handleSort = (column: keyof JobApplication) => {
+    setAsc((prev) => (sortedCol === column ? !prev : true));
+    setSortedCol(column);
+  };
+
+  const sortProps = { sortedCol, asc, onSort: handleSort };
+
   return (
     <div className="application_table">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Company Name</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date Applied</TableHead>
+            <SortableHead
+              label="Company Name"
+              column="companyName"
+              {...sortProps}
+            />
+            <SortableHead label="Role" column="roleTitle" {...sortProps} />
+            <SortableHead label="Status" column="status" {...sortProps} />
+            <SortableHead
+              label="Date Applied"
+              column="dateApplied"
+              {...sortProps}
+            />
             <TableHead>Location</TableHead>
             <TableHead>Source</TableHead>
             <TableHead>Notes</TableHead>
@@ -122,7 +190,7 @@ export const ApplicationTable = ({
               </TableCell>
             </TableRow>
           )}
-          {applicationData.map((application) => (
+          {sortedData.map((application) => (
             <TableRow key={application.id}>
               <TableCell className="table_company">
                 {application.jobUrl ? (
@@ -158,9 +226,27 @@ export const ApplicationTable = ({
                 {application.source || "—"}
               </TableCell>
               <TableCell className="table_notes" title={application.notes}>
-                {application.notes || "—"}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Open notes"
+                  onClick={() => setOpenNotesId(application.id)}
+                >
+                  <NotebookPen />
+                </Button>
+                <ApplicationNotesMenu
+                  companyName={application.companyName}
+                  roleTitle={application.roleTitle}
+                  notes={application.notes}
+                  open={openNotesId === application.id}
+                  onOpenChange={(open) => !open && setOpenNotesId(null)}
+                  onNotesUpdate={(notes) => {
+                    onNotesUpdate(application.id, notes);
+                    setOpenNotesId(null);
+                  }}
+                />
               </TableCell>
-              <TableCell className="table_actions">
+              <TableCell>
                 <ApplicationTableMenu
                   application={application}
                   onDeleted={onDeleted}

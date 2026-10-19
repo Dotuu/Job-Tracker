@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { ApplicationForm } from "./ApplicationForm";
+import { ApplicationForm } from "./Application/Form/ApplicationForm";
 import type { JobApplication, NewApplicationProps } from "@/lib/types";
 import { useAuthToken } from "@/hooks/use-api";
 import { postApplication } from "@/lib/api";

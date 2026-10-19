@@ -6,28 +6,28 @@ import {
   FieldLabel,
   FieldSet,
   FieldTitle,
-} from "./ui/field";
-import { Input } from "./ui/input";
+} from "../../ui/field";
+import { Input } from "../../ui/input";
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Calendar } from "./ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Calendar } from "../../ui/calendar";
 import {
   Combobox,
   ComboboxContent,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "./ui/combobox";
-import { Button } from "./ui/button";
+} from "../../ui/combobox";
+import { Button } from "../../ui/button";
 import {
   ArrowRightLeft,
   BuildingComplex,
   CalendarIcon,
   House,
 } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
+import { Label } from "../../ui/label";
 
 interface ApplicationFormProps {
   initialValues?: NewApplicationProps;
