@@ -247,7 +247,7 @@ export const ApplicationForm = ({
             <Field orientation={"horizontal"}>
               <FieldContent>
                 <FieldTitle>Remote {<House />}</FieldTitle>
-                <FieldDescription>Jobs that is fully remote</FieldDescription>
+                <FieldDescription>Job that is fully remote.</FieldDescription>
               </FieldContent>
               <RadioGroupItem value="REMOTE" id="remote" />
             </Field>
@@ -258,7 +258,7 @@ export const ApplicationForm = ({
               <FieldContent>
                 <FieldTitle>Hybrid {<ArrowRightLeft />}</FieldTitle>
                 <FieldDescription>
-                  Jobs that are a mix of remote & on-site
+                  Job that is a mix of remote & on-site.
                 </FieldDescription>
               </FieldContent>
               <RadioGroupItem value="HYBRID" id="hybrid" />
@@ -269,7 +269,7 @@ export const ApplicationForm = ({
             <Field orientation={"horizontal"}>
               <FieldContent>
                 <FieldTitle>On-Site {<BuildingComplex />}</FieldTitle>
-                <FieldDescription>Jobs that are fully on-site</FieldDescription>
+                <FieldDescription>Job that is fully on-site.</FieldDescription>
               </FieldContent>
               <RadioGroupItem value="ON_SITE" id="on_site" />
             </Field>

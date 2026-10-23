@@ -13,16 +13,18 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import { BriefcaseBusinessIcon, ChevronDown, LogOutIcon } from "lucide-react";
-import type { JobApplication } from "@/lib/types";
+import type { JobApplication, Resume } from "@/lib/types";
 import { Show, SignOutButton } from "@clerk/react";
 import { Button } from "./ui/button";
 import "./Navbar.scss";
+import { NewResume } from "./Application/Resume/NewResume";
 
-export const Navbar = ({
-  onCreated,
-}: {
+interface NavbarProps {
   onCreated: (application: JobApplication) => void;
-}) => {
+  submitResume: (resume: Resume) => void;
+}
+
+export const Navbar = ({ onCreated, submitResume }: NavbarProps) => {
   return (
     <Sidebar className="applications_nav">
       <SidebarHeader className="applications_nav_header">
@@ -42,6 +44,17 @@ export const Navbar = ({
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
               <NewApplication onCreated={onCreated} />
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup className="group_resumes">
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              Resumes
+              <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
+            </SidebarGroupLabel>
+            <CollapsibleContent className="nav_group_content">
+              <NewResume submitResume={submitResume} />
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>

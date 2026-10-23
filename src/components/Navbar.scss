@@ -1,11 +1,20 @@
-.applications_nav_header {
-  padding: 1rem 1rem 0.5rem;
+.nav_content {
+  margin: 0;
 }
 
 .nav_brand {
   display: flex;
   align-items: center;
   gap: 0.625rem;
+}
+
+.group_applications,
+.group_resumes {
+  padding: 0;
+}
+
+.nav_sections {
+  gap: 0;
 }
 
 .nav_brand_icon {
@@ -34,9 +43,28 @@
 .nav_group_content {
   padding: 0.25rem 0.5rem;
 
-  // the "New Application" dialog trigger
-  > button {
+  // the "New Application" / "New Resume" dialog triggers
+  .nav_action_btn {
     width: 100%;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: var(--sidebar-foreground);
+
+    svg {
+      color: var(--muted-foreground);
+      transition: color 150ms;
+    }
+
+    &:hover,
+    &[aria-expanded="true"] {
+      background: var(--sidebar-accent);
+      color: var(--sidebar-accent-foreground);
+
+      svg {
+        color: var(--sidebar-primary);
+      }
+    }
   }
 }
 

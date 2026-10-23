@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ApplicationSearch } from "@/components/ApplicationSearch";
+import { sub } from "date-fns";
 
 export const Applications = () => {
   const { isLoaded, isSignedIn } = useAuth();
@@ -89,9 +90,13 @@ export const Applications = () => {
     setApplications((prev) => prev.filter((app) => app.id !== id));
   };
 
+  const submitResume = () => {
+    // API CALL
+  };
+
   return (
     <SidebarProvider>
-      <Navbar onCreated={handleCreated} />
+      <Navbar onCreated={handleCreated} submitResume={submitResume} />
       <SidebarInset>
         <header className="applications_header">
           <SidebarTrigger />

@@ -11,7 +11,7 @@ import { ApplicationForm } from "./Application/Form/ApplicationForm";
 import type { JobApplication, NewApplicationProps } from "@/lib/types";
 import { useAuthToken } from "@/hooks/use-api";
 import { postApplication } from "@/lib/api";
-import { PlusIcon } from "lucide-react";
+import { FilePlusIcon } from "lucide-react";
 
 export const NewApplication = ({
   onCreated,
@@ -32,8 +32,8 @@ export const NewApplication = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button>
-            <PlusIcon />
+          <Button variant="ghost" size="sm" className="nav_action_btn">
+            <FilePlusIcon />
             New Application
           </Button>
         }

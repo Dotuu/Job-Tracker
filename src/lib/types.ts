@@ -12,6 +12,15 @@ export interface JobApplication {
   locationType: string;
 }
 
+export interface Resume {
+  id?: number;
+  fileName: string;
+  contentType?: string;
+  sizeBytes?: number;
+  isDefault: boolean;
+  uplodedAt?: string;
+}
+
 export interface NewApplicationProps {
   companyName: string;
   roleTitle: string;

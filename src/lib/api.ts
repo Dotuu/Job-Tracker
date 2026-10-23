@@ -1,4 +1,4 @@
-import type { JobApplication, NewApplicationProps } from "./types";
+import type { JobApplication, NewApplicationProps, Resume } from "./types";
 
 const BASE_URL = "http://localhost:8080/api";
 
@@ -53,6 +53,17 @@ export const updateNotes = (
 
 export const getApplications = (token: string): Promise<JobApplication[]> => {
   return authFetch("/applications", token);
+};
+
+export const postResume = (token: string, data: Resume): Promise<Resume> => {
+  return authFetch("/resumes", token, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+export const getResumes = (token: string): Promise<Resume[]> => {
+  return authFetch("/resumes", token);
 };
 
 export const updateApplication = (
