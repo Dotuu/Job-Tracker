@@ -1,8 +1,17 @@
 import { ApplicationTable } from "@/components/Application/Table/ApplicationTable";
 import { Navbar } from "@/components/Navbar";
 import { useAuthToken } from "@/hooks/use-api";
-import { getApplications, searchApplication, updateNotes } from "@/lib/api";
-import type { JobApplication } from "@/lib/types";
+import {
+  deleteResume,
+  getApplications,
+  getResumes,
+  postResume,
+  renameResume,
+  setDefaultResume,
+  searchApplication,
+  updateNotes,
+} from "@/lib/api";
+import type { JobApplication, Resume } from "@/lib/types";
 import { useAuth } from "@clerk/react";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -14,13 +23,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ApplicationSearch } from "@/components/ApplicationSearch";
-import { sub } from "date-fns";
 
 export const Applications = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const getAuthToken = useAuthToken();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [resumes, setResumes] = useState<Resume[]>([]);
 
   const handleSearch = useDebouncedCallback(async (query: string) => {
     const token = await getAuthToken();
@@ -46,9 +55,11 @@ export const Applications = () => {
       try {
         const token = await getAuthToken();
         const data = await getApplications(token);
+        const resumeData = await getResumes(token);
 
         if (!ignore) {
           setApplications(data);
+          setResumes(resumeData);
         }
       } catch (error) {
         if (!ignore) {
@@ -64,8 +75,54 @@ export const Applications = () => {
     };
   }, [isLoaded, isSignedIn, getAuthToken]);
 
-  const handleCreated = (application: JobApplication) => {
+  const handleCreatedApplication = (application: JobApplication) => {
     setApplications((prev) => [...prev, application]);
+  };
+
+  const handleCreatedResume = async (file: File, title: string) => {
+    try {
+      const token = await getAuthToken();
+      const created = await postResume(token, file, title);
+      setResumes((prev) => [...prev, created]);
+      return true;
+    } catch (err) {
+      setError((err as Error).message);
+      return false;
+    }
+  };
+
+  const handleRenameResume = async (id: number, fileName: string) => {
+    try {
+      const token = await getAuthToken();
+      const updated = await renameResume(token, id, fileName);
+      setResumes((prev) => prev.map((r) => (r.id === id ? updated : r)));
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
+  const handleSetDefaultResume = async (id: number) => {
+    try {
+      const token = await getAuthToken();
+      const updated = await setDefaultResume(token, id);
+      // backend clears every other default for the user, so mirror that locally
+      setResumes((prev) =>
+        prev.map((r) => (r.id === id ? updated : { ...r, isDefault: false })),
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
+  const handleDeleteResume = async (id: number) => {
+    try {
+      const token = await getAuthToken();
+      await deleteResume(token, id);
+      // refetch since deleting the default makes the backend promote another resume
+      setResumes(await getResumes(token));
+    } catch (err) {
+      setError((err as Error).message);
+    }
   };
 
   const handleUpdated = (updated: JobApplication) => {
@@ -90,13 +147,16 @@ export const Applications = () => {
     setApplications((prev) => prev.filter((app) => app.id !== id));
   };
 
-  const submitResume = () => {
-    // API CALL
-  };
-
   return (
     <SidebarProvider>
-      <Navbar onCreated={handleCreated} submitResume={submitResume} />
+      <Navbar
+        onCreated={handleCreatedApplication}
+        submitResume={handleCreatedResume}
+        onRenameResume={handleRenameResume}
+        onDeleteResume={handleDeleteResume}
+        onSetDefaultResume={handleSetDefaultResume}
+        resumes={resumes}
+      />
       <SidebarInset>
         <header className="applications_header">
           <SidebarTrigger />

@@ -6,17 +6,22 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import type { Resume } from "@/lib/types";
 import { FileTextIcon } from "lucide-react";
 import { useState } from "react";
 
 interface ResumeFormProps {
-  submitResume: (resume: Resume) => void;
+  submitResume: (file: File, title: string) => Promise<void>;
 }
 
 export const ResumeForm = ({ submitResume }: ResumeFormProps) => {
-  const handleResumeSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleResumeSubmit = async (
+    e: React.SyntheticEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
 
     if (!fileExists) {
       setFileError(true);
@@ -39,17 +44,18 @@ export const ResumeForm = ({ submitResume }: ResumeFormProps) => {
       resumeTitle = fileName.replace(/\.[^/.]+$/, "");
     }
 
-    const resume: Resume = {
-      fileName: resumeTitle,
-      isDefault: false,
-    };
-
-    submitResume(resume);
+    setIsSubmitting(true);
+    try {
+      await submitResume(file, resumeTitle);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const [title, setTitle] = useState("");
   const [fileExists, setFileExists] = useState(false);
   const [fileError, setFileError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -104,7 +110,9 @@ export const ResumeForm = ({ submitResume }: ResumeFormProps) => {
           )}
         </Field>
         <Field>
-          <Button type={"submit"}>Upload Resume</Button>
+          <Button type={"submit"} disabled={isSubmitting}>
+            {isSubmitting ? "Uploading..." : "Upload Resume"}
+          </Button>
         </Field>
       </FieldSet>
     </form>

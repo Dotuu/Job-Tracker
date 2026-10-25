@@ -2,21 +2,28 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Resume } from "@/lib/types";
 import { FileUpIcon } from "lucide-react";
 import { useState } from "react";
 import { ResumeForm } from "./ResumeForm";
 
 interface NewResumeProps {
-  submitResume: (resume: Resume) => void;
+  submitResume: (file: File, title: string) => Promise<boolean>;
 }
 
 export const NewResume = ({ submitResume }: NewResumeProps) => {
   const [open, setOpen] = useState(false);
+
+  const handleSubmit = async (file: File, title: string) => {
+    const uploaded = await submitResume(file, title);
+    if (uploaded) {
+      setOpen(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -31,9 +38,12 @@ export const NewResume = ({ submitResume }: NewResumeProps) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Upload new Resume (PDF only)</DialogTitle>
+          <DialogDescription>
+            Name and upload resume, for easy access here.
+          </DialogDescription>
         </DialogHeader>
 
-        <ResumeForm submitResume={submitResume} />
+        <ResumeForm submitResume={handleSubmit} />
       </DialogContent>
     </Dialog>
   );

@@ -10,7 +10,9 @@ const authFetch = async (
   const response = await fetch(`${BASE_URL}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      ...(init.body instanceof FormData
+        ? {}
+        : { "Content-Type": "application/json" }),
       ...init.headers,
       Authorization: `Bearer ${token}`,
     },
@@ -55,15 +57,49 @@ export const getApplications = (token: string): Promise<JobApplication[]> => {
   return authFetch("/applications", token);
 };
 
-export const postResume = (token: string, data: Resume): Promise<Resume> => {
+export const postResume = (
+  token: string,
+  file: File,
+  title: string,
+): Promise<Resume> => {
+  const body = new FormData();
+  body.append("file", file);
+  body.append("title", title);
+
   return authFetch("/resumes", token, {
     method: "POST",
-    body: JSON.stringify(data),
+    body,
   });
 };
 
 export const getResumes = (token: string): Promise<Resume[]> => {
   return authFetch("/resumes", token);
+};
+
+export const renameResume = (
+  token: string,
+  resumeId: number,
+  fileName: string,
+): Promise<Resume> => {
+  return authFetch(`/resumes/${resumeId}`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ fileName }),
+  });
+};
+
+export const setDefaultResume = (
+  token: string,
+  resumeId: number,
+): Promise<Resume> => {
+  return authFetch(`/resumes/${resumeId}/default`, token, {
+    method: "PATCH",
+  });
+};
+
+export const deleteResume = (token: string, resumeId: number) => {
+  return authFetch(`/resumes/${resumeId}`, token, {
+    method: "DELETE",
+  });
 };
 
 export const updateApplication = (

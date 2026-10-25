@@ -18,13 +18,25 @@ import { Show, SignOutButton } from "@clerk/react";
 import { Button } from "./ui/button";
 import "./Navbar.scss";
 import { NewResume } from "./Application/Resume/NewResume";
+import { ViewResume } from "./Application/Resume/ViewResume";
 
 interface NavbarProps {
   onCreated: (application: JobApplication) => void;
-  submitResume: (resume: Resume) => void;
+  submitResume: (file: File, title: string) => Promise<boolean>;
+  onRenameResume: (id: number, fileName: string) => void;
+  onDeleteResume: (id: number) => void;
+  onSetDefaultResume: (id: number) => void;
+  resumes: Resume[];
 }
 
-export const Navbar = ({ onCreated, submitResume }: NavbarProps) => {
+export const Navbar = ({
+  onCreated,
+  submitResume,
+  onRenameResume,
+  onDeleteResume,
+  onSetDefaultResume,
+  resumes,
+}: NavbarProps) => {
   return (
     <Sidebar className="applications_nav">
       <SidebarHeader className="applications_nav_header">
@@ -55,6 +67,12 @@ export const Navbar = ({ onCreated, submitResume }: NavbarProps) => {
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
               <NewResume submitResume={submitResume} />
+              <ViewResume
+                resumes={resumes}
+                onRename={onRenameResume}
+                onDelete={onDeleteResume}
+                onSetDefault={onSetDefaultResume}
+              />
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
