@@ -1,4 +1,4 @@
-import type { NewApplicationProps } from "@/lib/types";
+import type { NewApplicationProps, Resume } from "@/lib/types";
 import {
   Field,
   FieldContent,
@@ -33,12 +33,14 @@ interface ApplicationFormProps {
   initialValues?: NewApplicationProps;
   submitLabel: string;
   onSubmit: (data: NewApplicationProps) => Promise<void>;
+  resumes: Resume[];
 }
 
 export const ApplicationForm = ({
   initialValues,
   submitLabel,
   onSubmit,
+  resumes,
 }: ApplicationFormProps) => {
   const jobSource: string[] = ["Linkedin", "Referral", "Google", "Indeed"];
   const jobStatus: string[] = [
@@ -77,9 +79,17 @@ export const ApplicationForm = ({
   const [jobSourceValue, setJobSourceValue] = useState(
     initialValues?.source ?? "",
   );
+
   const [jobStatusValue, setJobStatusValue] = useState(
     initialValues?.status ? convertFromEnumValue(initialValues.status) : "",
   );
+
+  const [linkedResumeId, setLinkedResumeId] = useState<number | null>(
+    initialValues?.resumeId ?? null,
+  );
+
+  const selectedResume =
+    resumes.find((resume) => resume.id === linkedResumeId) ?? null;
 
   const [hideLocation, setHideLocation] = useState(
     !initialValues?.locationType || initialValues.locationType === "REMOTE",
@@ -105,6 +115,7 @@ export const ApplicationForm = ({
       locationType: convertToEnumValue(
         String(formData.get("job_location_radio") ?? ""),
       ),
+      resumeId: linkedResumeId ?? undefined,
     };
 
     try {
@@ -353,6 +364,33 @@ export const ApplicationForm = ({
                 {(item) => (
                   <ComboboxItem key={item} value={item}>
                     {item}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor={"linked_resume"}>
+            Link the resume used to apply
+          </FieldLabel>
+          <Combobox
+            id={"linked_resume"}
+            items={resumes}
+            itemToStringLabel={(resume: Resume) => resume.fileName}
+            itemToStringValue={(resume: Resume) => String(resume.id)}
+            value={selectedResume}
+            onValueChange={(resume: Resume | null) =>
+              setLinkedResumeId(resume?.id ?? null)
+            }
+          >
+            <ComboboxInput placeholder={"Choose resume"} />
+            <ComboboxContent>
+              <ComboboxList>
+                {(resume: Resume) => (
+                  <ComboboxItem key={resume.id} value={resume}>
+                    {resume.fileName}
                   </ComboboxItem>
                 )}
               </ComboboxList>

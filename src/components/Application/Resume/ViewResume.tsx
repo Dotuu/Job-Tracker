@@ -7,23 +7,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Resume } from "@/lib/types";
+import type { JobApplication, Resume } from "@/lib/types";
 import { Eye } from "lucide-react";
 import { useState } from "react";
 import { ResumeTable } from "./ResumeTable";
 
 interface ViewResumeProps {
   resumes: Resume[];
+  applications: JobApplication[];
   onRename: (id: number, fileName: string) => void;
   onDelete: (id: number) => void;
   onSetDefault: (id: number) => void;
+  onUnlinkResume: (applicationId: number) => void;
 }
 
 export const ViewResume = ({
   resumes,
+  applications,
   onRename,
   onDelete,
   onSetDefault,
+  onUnlinkResume,
 }: ViewResumeProps) => {
   const [open, setOpen] = useState(false);
 
@@ -47,9 +51,11 @@ export const ViewResume = ({
 
         <ResumeTable
           resumes={resumes}
+          applications={applications}
           onRename={onRename}
           onDelete={onDelete}
           onSetDefault={onSetDefault}
+          onUnlinkResume={onUnlinkResume}
         />
       </DialogContent>
     </Dialog>

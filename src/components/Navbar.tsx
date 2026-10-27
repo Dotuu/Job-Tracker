@@ -26,7 +26,9 @@ interface NavbarProps {
   onRenameResume: (id: number, fileName: string) => void;
   onDeleteResume: (id: number) => void;
   onSetDefaultResume: (id: number) => void;
+  onUnlinkResume: (applicationId: number) => void;
   resumes: Resume[];
+  applications: JobApplication[];
 }
 
 export const Navbar = ({
@@ -35,7 +37,9 @@ export const Navbar = ({
   onRenameResume,
   onDeleteResume,
   onSetDefaultResume,
+  onUnlinkResume,
   resumes,
+  applications,
 }: NavbarProps) => {
   return (
     <Sidebar className="applications_nav">
@@ -55,7 +59,7 @@ export const Navbar = ({
               <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
-              <NewApplication onCreated={onCreated} />
+              <NewApplication resumes={resumes} onCreated={onCreated} />
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
@@ -69,9 +73,11 @@ export const Navbar = ({
               <NewResume submitResume={submitResume} />
               <ViewResume
                 resumes={resumes}
+                applications={applications}
                 onRename={onRenameResume}
                 onDelete={onDeleteResume}
                 onSetDefault={onSetDefaultResume}
+                onUnlinkResume={onUnlinkResume}
               />
             </CollapsibleContent>
           </SidebarGroup>

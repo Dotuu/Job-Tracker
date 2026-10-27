@@ -9,18 +9,20 @@ import { EllipsisVerticalIcon, SquarePenIcon, TrashIcon } from "lucide-react";
 import { DeleteApplicationPopup } from "../../DeleteApplicationPopup";
 import { EditApplicationPopup } from "../../EditApplicationPopup";
 import { useState } from "react";
-import type { JobApplication } from "@/lib/types";
+import type { JobApplication, Resume } from "@/lib/types";
 
 export interface ApplicationTableMenuProps {
   application: JobApplication;
   onDeleted: (id: number) => void;
   onUpdated: (application: JobApplication) => void;
+  resumes: Resume[];
 }
 
 export const ApplicationTableMenu = ({
   application,
   onDeleted,
   onUpdated,
+  resumes,
 }: ApplicationTableMenuProps) => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -52,6 +54,7 @@ export const ApplicationTableMenu = ({
         open={editOpen}
         onOpenChange={setEditOpen}
         onUpdated={onUpdated}
+        resumes={resumes}
       />
 
       <DeleteApplicationPopup

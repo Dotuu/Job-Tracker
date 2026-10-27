@@ -9,6 +9,7 @@ import {
   renameResume,
   setDefaultResume,
   searchApplication,
+  updateApplicationResume,
   updateNotes,
 } from "@/lib/api";
 import type { JobApplication, Resume } from "@/lib/types";
@@ -143,6 +144,16 @@ export const Applications = () => {
     }
   };
 
+  const handleUnlinkResume = async (applicationId: number) => {
+    try {
+      const token = await getAuthToken();
+      const updated = await updateApplicationResume(token, applicationId, null);
+      handleUpdated(updated);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
   const handleDeleted = (id: number) => {
     setApplications((prev) => prev.filter((app) => app.id !== id));
   };
@@ -155,7 +166,9 @@ export const Applications = () => {
         onRenameResume={handleRenameResume}
         onDeleteResume={handleDeleteResume}
         onSetDefaultResume={handleSetDefaultResume}
+        onUnlinkResume={handleUnlinkResume}
         resumes={resumes}
+        applications={applications}
       />
       <SidebarInset>
         <header className="applications_header">
@@ -187,6 +200,7 @@ export const Applications = () => {
             onDeleted={handleDeleted}
             onUpdated={handleUpdated}
             onNotesUpdate={handleNotesUpdate}
+            resumes={resumes}
           />
         </section>
       </SidebarInset>

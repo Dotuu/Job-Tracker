@@ -1,4 +1,4 @@
-import type { JobApplication } from "@/lib/types";
+import type { JobApplication, Resume } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -31,6 +31,7 @@ interface JobApplicationProps {
   onDeleted: (id: number) => void;
   onUpdated: (application: JobApplication) => void;
   onNotesUpdate: (id: number, notes: string) => void;
+  resumes: Resume[];
 }
 
 const formatEnum = (value: string) =>
@@ -134,6 +135,7 @@ export const ApplicationTable = ({
   onDeleted,
   onUpdated,
   onNotesUpdate,
+  resumes,
 }: JobApplicationProps) => {
   const [openNotesId, setOpenNotesId] = useState<number | null>(null);
   const [sortedCol, setSortedCol] = useState<keyof JobApplication | null>(null);
@@ -251,6 +253,7 @@ export const ApplicationTable = ({
                   application={application}
                   onDeleted={onDeleted}
                   onUpdated={onUpdated}
+                  resumes={resumes}
                 />
               </TableCell>
             </TableRow>

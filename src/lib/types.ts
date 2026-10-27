@@ -10,6 +10,7 @@ export interface JobApplication {
   source?: string;
   location?: string;
   locationType: string;
+  resumeId?: number;
 }
 
 export interface Resume {
@@ -30,6 +31,7 @@ export interface NewApplicationProps {
   status: string;
   location?: string;
   locationType?: string;
+  resumeId?: number;
 }
 
 export interface DeleteApplicationProps {

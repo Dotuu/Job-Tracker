@@ -8,22 +8,27 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { ApplicationForm } from "./Application/Form/ApplicationForm";
-import type { JobApplication, NewApplicationProps } from "@/lib/types";
+import type { JobApplication, NewApplicationProps, Resume } from "@/lib/types";
 import { useAuthToken } from "@/hooks/use-api";
-import { postApplication } from "@/lib/api";
+import { postApplication, updateApplicationResume } from "@/lib/api";
 import { FilePlusIcon } from "lucide-react";
 
 export const NewApplication = ({
   onCreated,
+  resumes,
 }: {
   onCreated: (application: JobApplication) => void;
+  resumes: Resume[];
 }) => {
   const [open, setOpen] = useState(false);
   const getAuthToken = useAuthToken();
 
   const handleSubmit = async (data: NewApplicationProps) => {
     const token = await getAuthToken();
-    const created = await postApplication(token, data);
+    let created = await postApplication(token, data);
+    if (data.resumeId != null) {
+      created = await updateApplicationResume(token, created.id, data.resumeId);
+    }
     onCreated(created);
     setOpen(false);
   };
@@ -45,6 +50,7 @@ export const NewApplication = ({
         <ApplicationForm
           submitLabel={"Create Application"}
           onSubmit={handleSubmit}
+          resumes={resumes}
         />
       </DialogContent>
     </Dialog>

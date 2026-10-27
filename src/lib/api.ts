@@ -113,6 +113,17 @@ export const updateApplication = (
   });
 };
 
+export const updateApplicationResume = (
+  token: string,
+  applicationId: number,
+  resumeId: number | null,
+): Promise<JobApplication> => {
+  return authFetch(`/applications/${applicationId}/resume`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ resumeId }),
+  });
+};
+
 export const deleteApplication = (token: string, applicationId: number) => {
   return authFetch(`/applications/${applicationId}`, token, {
     method: "DELETE",

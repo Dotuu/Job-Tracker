@@ -1,14 +1,15 @@
-import type { JobApplication, NewApplicationProps } from "@/lib/types";
+import type { JobApplication, NewApplicationProps, Resume } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { ApplicationForm } from "./Application/Form/ApplicationForm";
 import { useAuthToken } from "@/hooks/use-api";
-import { updateApplication } from "@/lib/api";
+import { updateApplication, updateApplicationResume } from "@/lib/api";
 
 interface EditApplicationProps {
   application: JobApplication;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdated: (application: JobApplication) => void;
+  resumes: Resume[];
 }
 
 export const EditApplicationPopup = ({
@@ -16,12 +17,20 @@ export const EditApplicationPopup = ({
   open,
   onOpenChange,
   onUpdated,
+  resumes,
 }: EditApplicationProps) => {
   const getAuthToken = useAuthToken();
 
   const handleSubmit = async (data: NewApplicationProps) => {
     const token = await getAuthToken();
-    const updated = await updateApplication(token, application.id, data);
+    let updated = await updateApplication(token, application.id, data);
+    if (data.resumeId !== application.resumeId) {
+      updated = await updateApplicationResume(
+        token,
+        application.id,
+        data.resumeId ?? null,
+      );
+    }
     onUpdated(updated);
     onOpenChange(false);
   };
@@ -39,6 +48,7 @@ export const EditApplicationPopup = ({
           initialValues={application}
           submitLabel={"Save Changes"}
           onSubmit={handleSubmit}
+          resumes={resumes}
         />
       </DialogContent>
     </Dialog>
