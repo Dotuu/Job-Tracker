@@ -26,7 +26,7 @@ interface NavbarProps {
   onRenameResume: (id: number, fileName: string) => void;
   onDeleteResume: (id: number) => void;
   onSetDefaultResume: (id: number) => void;
-  onUnlinkResume: (applicationId: number) => void;
+  onShowLinkedApplications: (resumeId: number) => void;
   resumes: Resume[];
   applications: JobApplication[];
 }
@@ -37,7 +37,7 @@ export const Navbar = ({
   onRenameResume,
   onDeleteResume,
   onSetDefaultResume,
-  onUnlinkResume,
+  onShowLinkedApplications,
   resumes,
   applications,
 }: NavbarProps) => {
@@ -77,7 +77,7 @@ export const Navbar = ({
                 onRename={onRenameResume}
                 onDelete={onDeleteResume}
                 onSetDefault={onSetDefaultResume}
-                onUnlinkResume={onUnlinkResume}
+                onShowLinked={onShowLinkedApplications}
               />
             </CollapsibleContent>
           </SidebarGroup>

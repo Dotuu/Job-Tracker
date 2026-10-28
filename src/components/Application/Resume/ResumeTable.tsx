@@ -16,7 +16,6 @@ import {
   X,
 } from "lucide-react";
 import { useState, type KeyboardEvent, type ReactElement } from "react";
-import { LinkedApplications } from "./LinkedApplications";
 
 interface ResumeTableProps {
   resumes: Resume[];
@@ -24,7 +23,7 @@ interface ResumeTableProps {
   onRename: (id: number, fileName: string) => void;
   onDelete: (id: number) => void;
   onSetDefault: (newDefaultId: number, previousDefaultId?: number) => void;
-  onUnlinkResume: (applicationId: number) => void;
+  onShowLinked: (resumeId: number) => void;
 }
 
 const formatSize = (bytes?: number) => {
@@ -61,15 +60,13 @@ export const ResumeTable = ({
   onRename,
   onDelete,
   onSetDefault,
-  onUnlinkResume,
+  onShowLinked,
 }: ResumeTableProps) => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [draftName, setDraftName] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-  const [linkedViewId, setLinkedViewId] = useState<number | null>(null);
 
   const currentDefaultId = resumes.find((r) => r.isDefault)?.id;
-  const linkedViewResume = resumes.find((r) => r.id === linkedViewId) ?? null;
 
   const countLinked = (resumeId?: number) =>
     applications.filter((app) => app.resumeId === resumeId).length;
@@ -114,8 +111,7 @@ export const ResumeTable = ({
   }
 
   return (
-    <>
-      <ul className="max-h-80 divide-y overflow-y-auto rounded-lg border">
+    <ul className="max-h-80 divide-y overflow-y-auto rounded-lg border">
         {resumes.map((resume) => {
           const isEditing = editingId === resume.id;
           const isConfirmingDelete = confirmDeleteId === resume.id;
@@ -249,7 +245,7 @@ export const ResumeTable = ({
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => setLinkedViewId(resume.id!)}
+                        onClick={() => onShowLinked(resume.id!)}
                       >
                         <BriefcaseBusiness />
                       </Button>
@@ -271,14 +267,5 @@ export const ResumeTable = ({
           );
         })}
       </ul>
-
-      <LinkedApplications
-        resume={linkedViewResume}
-        applications={applications}
-        open={linkedViewId !== null}
-        onOpenChange={(open) => !open && setLinkedViewId(null)}
-        onUnlink={onUnlinkResume}
-      />
-    </>
   );
 };

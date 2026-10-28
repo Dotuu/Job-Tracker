@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import type { JobApplication, Resume } from "@/lib/types";
 import { useAuth } from "@clerk/react";
+import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import "./Applications.scss";
@@ -31,6 +32,13 @@ export const Applications = () => {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [resumes, setResumes] = useState<Resume[]>([]);
+  const [resumeFilterId, setResumeFilterId] = useState<number | null>(null);
+
+  // derived, so the filter drops itself if the resume gets deleted
+  const resumeFilter = resumes.find((r) => r.id === resumeFilterId) ?? null;
+  const visibleApplications = resumeFilter
+    ? applications.filter((app) => app.resumeId === resumeFilter.id)
+    : applications;
 
   const handleSearch = useDebouncedCallback(async (query: string) => {
     const token = await getAuthToken();
@@ -166,7 +174,7 @@ export const Applications = () => {
         onRenameResume={handleRenameResume}
         onDeleteResume={handleDeleteResume}
         onSetDefaultResume={handleSetDefaultResume}
-        onUnlinkResume={handleUnlinkResume}
+        onShowLinkedApplications={setResumeFilterId}
         resumes={resumes}
         applications={applications}
       />
@@ -177,7 +185,28 @@ export const Applications = () => {
             orientation="vertical"
             className="applications_header_sep"
           />
-          <span className="applications_header_crumb">Applications</span>
+          <nav aria-label="Breadcrumb" className="applications_header_crumbs">
+            {resumeFilter ? (
+              <>
+                <button
+                  type="button"
+                  className="applications_header_crumb applications_header_crumb_link"
+                  onClick={() => setResumeFilterId(null)}
+                >
+                  Applications
+                </button>
+                <ChevronRight className="applications_header_crumb_sep" />
+                <span
+                  className="applications_header_crumb applications_header_crumb_current"
+                  aria-current="page"
+                >
+                  {resumeFilter.fileName}
+                </span>
+              </>
+            ) : (
+              <span className="applications_header_crumb">Applications</span>
+            )}
+          </nav>
         </header>
 
         <section className="applications_content">
@@ -185,9 +214,11 @@ export const Applications = () => {
             <div className="applications_title">
               <h1>Applications</h1>
               <p>
-                {applications.length}{" "}
-                {applications.length === 1 ? "application" : "applications"}{" "}
-                tracked
+                {visibleApplications.length}{" "}
+                {visibleApplications.length === 1
+                  ? "application"
+                  : "applications"}{" "}
+                {resumeFilter ? `using ${resumeFilter.fileName}` : "tracked"}
               </p>
             </div>
             <ApplicationSearch onSearchChange={handleSearch} />
@@ -196,11 +227,18 @@ export const Applications = () => {
           {error && <div className="applications_error">{error}</div>}
 
           <ApplicationTable
-            applicationData={applications}
+            applicationData={visibleApplications}
             onDeleted={handleDeleted}
             onUpdated={handleUpdated}
             onNotesUpdate={handleNotesUpdate}
+            onUnlinkResume={handleUnlinkResume}
             resumes={resumes}
+            emptyTitle={resumeFilter ? "No linked applications" : undefined}
+            emptyHint={
+              resumeFilter
+                ? "Link this resume from an application's Edit form."
+                : undefined
+            }
           />
         </section>
       </SidebarInset>

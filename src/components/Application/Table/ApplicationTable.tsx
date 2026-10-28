@@ -31,7 +31,10 @@ interface JobApplicationProps {
   onDeleted: (id: number) => void;
   onUpdated: (application: JobApplication) => void;
   onNotesUpdate: (id: number, notes: string) => void;
+  onUnlinkResume: (applicationId: number) => void;
   resumes: Resume[];
+  emptyTitle?: string;
+  emptyHint?: string;
 }
 
 const formatEnum = (value: string) =>
@@ -135,7 +138,10 @@ export const ApplicationTable = ({
   onDeleted,
   onUpdated,
   onNotesUpdate,
+  onUnlinkResume,
   resumes,
+  emptyTitle = "No applications yet",
+  emptyHint = "Use “New Application” in the sidebar to add your first one.",
 }: JobApplicationProps) => {
   const [openNotesId, setOpenNotesId] = useState<number | null>(null);
   const [sortedCol, setSortedCol] = useState<keyof JobApplication | null>(null);
@@ -184,10 +190,8 @@ export const ApplicationTable = ({
               <TableCell colSpan={8}>
                 <div className="table_empty">
                   <BriefcaseBusinessIcon />
-                  <p>No applications yet</p>
-                  <span>
-                    Use “New Application” in the sidebar to add your first one.
-                  </span>
+                  <p>{emptyTitle}</p>
+                  <span>{emptyHint}</span>
                 </div>
               </TableCell>
             </TableRow>
@@ -253,6 +257,7 @@ export const ApplicationTable = ({
                   application={application}
                   onDeleted={onDeleted}
                   onUpdated={onUpdated}
+                  onUnlinkResume={onUnlinkResume}
                   resumes={resumes}
                 />
               </TableCell>

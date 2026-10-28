@@ -18,7 +18,7 @@ interface ViewResumeProps {
   onRename: (id: number, fileName: string) => void;
   onDelete: (id: number) => void;
   onSetDefault: (id: number) => void;
-  onUnlinkResume: (applicationId: number) => void;
+  onShowLinked: (resumeId: number) => void;
 }
 
 export const ViewResume = ({
@@ -27,7 +27,7 @@ export const ViewResume = ({
   onRename,
   onDelete,
   onSetDefault,
-  onUnlinkResume,
+  onShowLinked,
 }: ViewResumeProps) => {
   const [open, setOpen] = useState(false);
 
@@ -55,7 +55,10 @@ export const ViewResume = ({
           onRename={onRename}
           onDelete={onDelete}
           onSetDefault={onSetDefault}
-          onUnlinkResume={onUnlinkResume}
+          onShowLinked={(resumeId) => {
+            setOpen(false);
+            onShowLinked(resumeId);
+          }}
         />
       </DialogContent>
     </Dialog>
