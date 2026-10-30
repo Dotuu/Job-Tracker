@@ -1,4 +1,5 @@
-import type { JobApplication, NewApplicationProps, Resume } from "./types";
+import type { TagProps } from "@/components/Application/Tag/Tags";
+import type { JobApplication, NewApplicationProps, Resume, Tag } from "./types";
 
 const BASE_URL = "http://localhost:8080/api";
 
@@ -42,6 +43,13 @@ export const postApplication = (
   });
 };
 
+export const postTag = (token: string, tag: TagProps): Promise<Tag> => {
+  return authFetch("/tags", token, {
+    method: "POST",
+    body: JSON.stringify(tag),
+  });
+};
+
 export const updateNotes = (
   token: string,
   applicationId: number,
@@ -55,6 +63,10 @@ export const updateNotes = (
 
 export const getApplications = (token: string): Promise<JobApplication[]> => {
   return authFetch("/applications", token);
+};
+
+export const getTags = (token: string): Promise<TagProps[]> => {
+  return authFetch("/tags", token);
 };
 
 export const postResume = (
@@ -121,6 +133,17 @@ export const updateApplicationResume = (
   return authFetch(`/applications/${applicationId}/resume`, token, {
     method: "PATCH",
     body: JSON.stringify({ resumeId }),
+  });
+};
+
+export const updateApplicationTags = (
+  token: string,
+  applicationId: number,
+  tagIds: number[],
+): Promise<JobApplication> => {
+  return authFetch(`/applications/${applicationId}/tags`, token, {
+    method: "PUT",
+    body: JSON.stringify({ tagIds }),
   });
 };
 

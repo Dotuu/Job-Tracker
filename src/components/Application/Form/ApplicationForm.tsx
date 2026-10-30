@@ -1,4 +1,4 @@
-import type { NewApplicationProps, Resume } from "@/lib/types";
+import type { NewApplicationProps, Resume, Tag } from "@/lib/types";
 import {
   Field,
   FieldContent,
@@ -14,10 +14,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Calendar } from "../../ui/calendar";
 import {
   Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
   ComboboxContent,
+  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
 } from "../../ui/combobox";
 import { Button } from "../../ui/button";
 import {
@@ -34,6 +40,7 @@ interface ApplicationFormProps {
   submitLabel: string;
   onSubmit: (data: NewApplicationProps) => Promise<void>;
   resumes: Resume[];
+  tags: Tag[];
 }
 
 export const ApplicationForm = ({
@@ -41,6 +48,7 @@ export const ApplicationForm = ({
   submitLabel,
   onSubmit,
   resumes,
+  tags,
 }: ApplicationFormProps) => {
   const jobSource: string[] = ["Linkedin", "Referral", "Google", "Indeed"];
   const jobStatus: string[] = [
@@ -91,6 +99,16 @@ export const ApplicationForm = ({
   const selectedResume =
     resumes.find((resume) => resume.id === linkedResumeId) ?? null;
 
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>(
+    initialValues?.tagIds ?? [],
+  );
+
+  const selectedTags = tags.filter(
+    (tag) => tag.id != null && selectedTagIds.includes(tag.id),
+  );
+
+  const tagsAnchor = useComboboxAnchor();
+
   const [hideLocation, setHideLocation] = useState(
     !initialValues?.locationType || initialValues.locationType === "REMOTE",
   );
@@ -116,6 +134,7 @@ export const ApplicationForm = ({
         String(formData.get("job_location_radio") ?? ""),
       ),
       resumeId: linkedResumeId ?? undefined,
+      tagIds: selectedTagIds,
     };
 
     try {
@@ -123,7 +142,7 @@ export const ApplicationForm = ({
         await onSubmit(applicationData);
       }
     } catch (error) {
-      throw new Error("Failed to submit application");
+      throw new Error("Failed to submit application", { cause: error });
     }
   };
 
@@ -391,6 +410,60 @@ export const ApplicationForm = ({
                 {(resume: Resume) => (
                   <ComboboxItem key={resume.id} value={resume}>
                     {resume.fileName}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor={"application_tags"}>Tags</FieldLabel>
+          <Combobox
+            multiple
+            autoHighlight
+            items={tags}
+            itemToStringLabel={(tag: Tag) => tag.name}
+            itemToStringValue={(tag: Tag) => String(tag.id)}
+            isItemEqualToValue={(a: Tag, b: Tag) => a.id === b.id}
+            value={selectedTags}
+            onValueChange={(value: Tag[]) =>
+              setSelectedTagIds(value.flatMap((tag) => tag.id ?? []))
+            }
+          >
+            <ComboboxChips ref={tagsAnchor}>
+              <ComboboxValue>
+                {(value: Tag[]) => (
+                  <>
+                    {value.map((tag) => (
+                      <ComboboxChip key={tag.id}>
+                        <span
+                          className="size-2 shrink-0 rounded-full"
+                          style={{ background: tag.colorHex }}
+                        />
+                        {tag.name}
+                      </ComboboxChip>
+                    ))}
+                    <ComboboxChipsInput
+                      id={"application_tags"}
+                      placeholder={value.length === 0 ? "Add tags" : ""}
+                    />
+                  </>
+                )}
+              </ComboboxValue>
+            </ComboboxChips>
+            <ComboboxContent anchor={tagsAnchor}>
+              <ComboboxEmpty>
+                No tags found. Create one under Tags in the sidebar.
+              </ComboboxEmpty>
+              <ComboboxList>
+                {(tag: Tag) => (
+                  <ComboboxItem key={tag.id} value={tag}>
+                    <span
+                      className="size-2 shrink-0 rounded-full"
+                      style={{ background: tag.colorHex }}
+                    />
+                    {tag.name}
                   </ComboboxItem>
                 )}
               </ComboboxList>

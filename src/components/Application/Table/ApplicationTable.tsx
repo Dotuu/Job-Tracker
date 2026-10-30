@@ -1,4 +1,4 @@
-import type { JobApplication, Resume } from "@/lib/types";
+import type { JobApplication, Resume, Tag } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -33,6 +33,9 @@ interface JobApplicationProps {
   onNotesUpdate: (id: number, notes: string) => void;
   onUnlinkResume: (applicationId: number) => void;
   resumes: Resume[];
+  tags: Tag[];
+  activeTagIds: number[];
+  onToggleTag: (tagId: number) => void;
   emptyTitle?: string;
   emptyHint?: string;
 }
@@ -99,6 +102,58 @@ const LocationPill = ({
   );
 };
 
+const MAX_VISIBLE_TAGS = 2;
+
+const TagChips = ({
+  tags,
+  activeTagIds,
+  onToggle,
+}: {
+  tags: Tag[];
+  activeTagIds: number[];
+  onToggle: (tagId: number) => void;
+}) => {
+  if (tags.length === 0) return "—";
+
+  const visible = tags.slice(0, MAX_VISIBLE_TAGS);
+  const hidden = tags.slice(MAX_VISIBLE_TAGS);
+
+  return (
+    <span className="tag_list">
+      {visible.map((tag) => {
+        const active = activeTagIds.includes(tag.id!);
+        return (
+          <button
+            key={tag.id}
+            type="button"
+            className={`tag_chip${active ? " tag_chip_active" : ""}`}
+            aria-pressed={active}
+            title={
+              active ? `Remove ${tag.name} filter` : `Filter by ${tag.name}`
+            }
+            onClick={() => onToggle(tag.id!)}
+          >
+            <span className="tag_dot" style={{ background: tag.colorHex }} />
+            <span className="tag_chip_name">{tag.name}</span>
+          </button>
+        );
+      })}
+      {hidden.length > 0 && (
+        <Tooltip>
+          <TooltipTrigger className="tag_more" delay={200}>
+            +{hidden.length}
+          </TooltipTrigger>
+          <TooltipContent>
+            <span className="tag_more_list">
+              {hidden.map((tag) => tag.name).join(", ")}
+            </span>
+          </TooltipContent>
+        </Tooltip>
+      )}
+    </span>
+  );
+};
+
 const SortableHead = ({
   label,
   column,
@@ -140,6 +195,9 @@ export const ApplicationTable = ({
   onNotesUpdate,
   onUnlinkResume,
   resumes,
+  tags,
+  activeTagIds,
+  onToggleTag,
   emptyTitle = "No applications yet",
   emptyHint = "Use “New Application” in the sidebar to add your first one.",
 }: JobApplicationProps) => {
@@ -161,6 +219,10 @@ export const ApplicationTable = ({
 
   const sortProps = { sortedCol, asc, onSort: handleSort };
 
+  const tagsById = new Map(tags.map((tag) => [tag.id, tag]));
+  const tagsFor = (application: JobApplication) =>
+    (application.tagIds ?? []).flatMap((id) => tagsById.get(id) ?? []);
+
   return (
     <div className="application_table">
       <Table>
@@ -179,6 +241,7 @@ export const ApplicationTable = ({
               {...sortProps}
             />
             <TableHead>Location</TableHead>
+            <TableHead>Tags</TableHead>
             <TableHead>Source</TableHead>
             <TableHead>Notes</TableHead>
             <TableHead></TableHead>
@@ -187,7 +250,7 @@ export const ApplicationTable = ({
         <TableBody>
           {applicationData.length === 0 && (
             <TableRow className="table_empty_row">
-              <TableCell colSpan={8}>
+              <TableCell colSpan={9}>
                 <div className="table_empty">
                   <BriefcaseBusinessIcon />
                   <p>{emptyTitle}</p>
@@ -229,6 +292,13 @@ export const ApplicationTable = ({
                 />
               </TableCell>
               <TableCell className="table_muted">
+                <TagChips
+                  tags={tagsFor(application)}
+                  activeTagIds={activeTagIds}
+                  onToggle={onToggleTag}
+                />
+              </TableCell>
+              <TableCell className="table_muted">
                 {application.source || "—"}
               </TableCell>
               <TableCell className="table_notes" title={application.notes}>
@@ -259,6 +329,7 @@ export const ApplicationTable = ({
                   onUpdated={onUpdated}
                   onUnlinkResume={onUnlinkResume}
                   resumes={resumes}
+                  tags={tags}
                 />
               </TableCell>
             </TableRow>

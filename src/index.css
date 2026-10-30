@@ -22,7 +22,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* shadcn dark tokens live on .dark in App.css; this just matches native UI */
 :root.dark {
   color-scheme: dark;
 }

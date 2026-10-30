@@ -11,8 +11,10 @@ import {
   searchApplication,
   updateApplicationResume,
   updateNotes,
+  getTags,
+  postTag,
 } from "@/lib/api";
-import type { JobApplication, Resume } from "@/lib/types";
+import type { JobApplication, Resume, Tag } from "@/lib/types";
 import { useAuth } from "@clerk/react";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -25,20 +27,35 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ApplicationSearch } from "@/components/ApplicationSearch";
+import type { TagProps } from "@/components/Application/Tag/Tags";
 
 export const Applications = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const getAuthToken = useAuthToken();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [error, setError] = useState<string | null>(null);
+
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [resumeFilterId, setResumeFilterId] = useState<number | null>(null);
-
-  // derived, so the filter drops itself if the resume gets deleted
   const resumeFilter = resumes.find((r) => r.id === resumeFilterId) ?? null;
-  const visibleApplications = resumeFilter
-    ? applications.filter((app) => app.resumeId === resumeFilter.id)
-    : applications;
+
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [activeTagIds, setActiveTagIds] = useState<number[]>([]);
+
+  const toggleTag = (tagId: number) => {
+    setActiveTagIds((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
+    );
+  };
+
+  const visibleApplications = applications.filter(
+    (app) =>
+      (!resumeFilter || app.resumeId === resumeFilter.id) &&
+      activeTagIds.every((id) => app.tagIds?.includes(id)),
+  );
+  const isFiltered = resumeFilter !== null || activeTagIds.length > 0;
 
   const handleSearch = useDebouncedCallback(async (query: string) => {
     const token = await getAuthToken();
@@ -65,10 +82,12 @@ export const Applications = () => {
         const token = await getAuthToken();
         const data = await getApplications(token);
         const resumeData = await getResumes(token);
+        const tagData = await getTags(token);
 
         if (!ignore) {
           setApplications(data);
           setResumes(resumeData);
+          setTags(tagData);
         }
       } catch (error) {
         if (!ignore) {
@@ -100,6 +119,18 @@ export const Applications = () => {
     }
   };
 
+  const handleCreatedTag = async (tag: TagProps) => {
+    try {
+      const token = await getAuthToken();
+      const created = await postTag(token, tag);
+      setTags((prev) => [...prev, created]);
+      return true;
+    } catch (err) {
+      setError((err as Error).message);
+      return false;
+    }
+  };
+
   const handleRenameResume = async (id: number, fileName: string) => {
     try {
       const token = await getAuthToken();
@@ -114,7 +145,6 @@ export const Applications = () => {
     try {
       const token = await getAuthToken();
       const updated = await setDefaultResume(token, id);
-      // backend clears every other default for the user, so mirror that locally
       setResumes((prev) =>
         prev.map((r) => (r.id === id ? updated : { ...r, isDefault: false })),
       );
@@ -127,7 +157,6 @@ export const Applications = () => {
     try {
       const token = await getAuthToken();
       await deleteResume(token, id);
-      // refetch since deleting the default makes the backend promote another resume
       setResumes(await getResumes(token));
     } catch (err) {
       setError((err as Error).message);
@@ -150,6 +179,12 @@ export const Applications = () => {
     } catch (err) {
       setError((err as Error).message);
     }
+  };
+
+  const handleEditTag = async (tag: TagProps) => {
+  };
+
+  const handleDeleteTag = async (tagId: number) => {
   };
 
   const handleUnlinkResume = async (applicationId: number) => {
@@ -177,6 +212,13 @@ export const Applications = () => {
         onShowLinkedApplications={setResumeFilterId}
         resumes={resumes}
         applications={applications}
+        tags={tags}
+        newTag={handleCreatedTag}
+        updateTag={handleEditTag}
+        deleteTag={handleDeleteTag}
+        activeTagIds={activeTagIds}
+        onToggleTag={toggleTag}
+        onClearTags={() => setActiveTagIds([])}
       />
       <SidebarInset>
         <header className="applications_header">
@@ -218,7 +260,11 @@ export const Applications = () => {
                 {visibleApplications.length === 1
                   ? "application"
                   : "applications"}{" "}
-                {resumeFilter ? `using ${resumeFilter.fileName}` : "tracked"}
+                {resumeFilter
+                  ? `using ${resumeFilter.fileName}`
+                  : isFiltered
+                    ? "shown"
+                    : "tracked"}
               </p>
             </div>
             <ApplicationSearch onSearchChange={handleSearch} />
@@ -233,11 +279,22 @@ export const Applications = () => {
             onNotesUpdate={handleNotesUpdate}
             onUnlinkResume={handleUnlinkResume}
             resumes={resumes}
-            emptyTitle={resumeFilter ? "No linked applications" : undefined}
+            tags={tags}
+            activeTagIds={activeTagIds}
+            onToggleTag={toggleTag}
+            emptyTitle={
+              resumeFilter
+                ? "No linked applications"
+                : isFiltered
+                  ? "No matching applications"
+                  : undefined
+            }
             emptyHint={
               resumeFilter
                 ? "Link this resume from an application's Edit form."
-                : undefined
+                : isFiltered
+                  ? "No application has every selected tag."
+                  : undefined
             }
           />
         </section>

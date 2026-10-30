@@ -14,7 +14,7 @@ import {
 import { DeleteApplicationPopup } from "../../DeleteApplicationPopup";
 import { EditApplicationPopup } from "../../EditApplicationPopup";
 import { useState } from "react";
-import type { JobApplication, Resume } from "@/lib/types";
+import type { JobApplication, Resume, Tag } from "@/lib/types";
 
 export interface ApplicationTableMenuProps {
   application: JobApplication;
@@ -22,6 +22,7 @@ export interface ApplicationTableMenuProps {
   onUpdated: (application: JobApplication) => void;
   onUnlinkResume: (applicationId: number) => void;
   resumes: Resume[];
+  tags: Tag[];
 }
 
 export const ApplicationTableMenu = ({
@@ -30,6 +31,7 @@ export const ApplicationTableMenu = ({
   onUpdated,
   onUnlinkResume,
   resumes,
+  tags,
 }: ApplicationTableMenuProps) => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -68,6 +70,7 @@ export const ApplicationTableMenu = ({
         onOpenChange={setEditOpen}
         onUpdated={onUpdated}
         resumes={resumes}
+        tags={tags}
       />
 
       <DeleteApplicationPopup

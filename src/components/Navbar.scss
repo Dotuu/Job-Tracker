@@ -43,7 +43,6 @@
 .nav_group_content {
   padding: 0.25rem 0.5rem;
 
-  // the "New Application" / "New Resume" dialog triggers
   .nav_action_btn {
     width: 100%;
     justify-content: flex-start;
@@ -81,4 +80,59 @@
       color: var(--sidebar-foreground);
     }
   }
+}
+
+.nav_tags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.nav_tag {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+
+  &:hover {
+    background: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+}
+
+.nav_tag_active {
+  background: var(--sidebar-accent);
+  color: var(--sidebar-foreground);
+  font-weight: 500;
+}
+
+.nav_tag_name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav_tag_check {
+  margin-left: auto;
+  color: var(--sidebar-primary);
+}
+
+.nav_tags_clear {
+  width: 100%;
+  justify-content: flex-start;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.nav_tags_empty {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tag_dot {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
 }

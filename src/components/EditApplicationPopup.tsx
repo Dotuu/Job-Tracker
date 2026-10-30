@@ -1,8 +1,17 @@
-import type { JobApplication, NewApplicationProps, Resume } from "@/lib/types";
+import type {
+  JobApplication,
+  NewApplicationProps,
+  Resume,
+  Tag,
+} from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { ApplicationForm } from "./Application/Form/ApplicationForm";
 import { useAuthToken } from "@/hooks/use-api";
-import { updateApplication, updateApplicationResume } from "@/lib/api";
+import {
+  updateApplication,
+  updateApplicationResume,
+  updateApplicationTags,
+} from "@/lib/api";
 
 interface EditApplicationProps {
   application: JobApplication;
@@ -10,7 +19,11 @@ interface EditApplicationProps {
   onOpenChange: (open: boolean) => void;
   onUpdated: (application: JobApplication) => void;
   resumes: Resume[];
+  tags: Tag[];
 }
+
+const sameIds = (a: number[], b: number[]) =>
+  a.length === b.length && a.every((id) => b.includes(id));
 
 export const EditApplicationPopup = ({
   application,
@@ -18,10 +31,11 @@ export const EditApplicationPopup = ({
   onOpenChange,
   onUpdated,
   resumes,
+  tags,
 }: EditApplicationProps) => {
   const getAuthToken = useAuthToken();
 
-  const handleSubmit = async (data: NewApplicationProps) => {
+  const handleSubmit = async ({ tagIds = [], ...data }: NewApplicationProps) => {
     const token = await getAuthToken();
     let updated = await updateApplication(token, application.id, data);
     if (data.resumeId !== application.resumeId) {
@@ -30,6 +44,9 @@ export const EditApplicationPopup = ({
         application.id,
         data.resumeId ?? null,
       );
+    }
+    if (!sameIds(tagIds, application.tagIds ?? [])) {
+      updated = await updateApplicationTags(token, application.id, tagIds);
     }
     onUpdated(updated);
     onOpenChange(false);
@@ -49,6 +66,7 @@ export const EditApplicationPopup = ({
           submitLabel={"Save Changes"}
           onSubmit={handleSubmit}
           resumes={resumes}
+          tags={tags}
         />
       </DialogContent>
     </Dialog>

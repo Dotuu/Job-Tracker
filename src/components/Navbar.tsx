@@ -13,12 +13,14 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import { BriefcaseBusinessIcon, ChevronDown, LogOutIcon } from "lucide-react";
-import type { JobApplication, Resume } from "@/lib/types";
+import type { JobApplication, Resume, Tag } from "@/lib/types";
 import { Show, SignOutButton } from "@clerk/react";
 import { Button } from "./ui/button";
 import "./Navbar.scss";
 import { NewResume } from "./Application/Resume/NewResume";
 import { ViewResume } from "./Application/Resume/ViewResume";
+import { Tags, type TagProps } from "./Application/Tag/Tags";
+import { TagsAction } from "./Application/Tag/TagsAction";
 
 interface NavbarProps {
   onCreated: (application: JobApplication) => void;
@@ -29,6 +31,13 @@ interface NavbarProps {
   onShowLinkedApplications: (resumeId: number) => void;
   resumes: Resume[];
   applications: JobApplication[];
+  tags: Tag[];
+  newTag: (tag: TagProps) => void;
+  updateTag: (tag: TagProps) => void;
+  deleteTag: (tagId: number) => void;
+  activeTagIds: number[];
+  onToggleTag: (tagId: number) => void;
+  onClearTags: () => void;
 }
 
 export const Navbar = ({
@@ -40,6 +49,13 @@ export const Navbar = ({
   onShowLinkedApplications,
   resumes,
   applications,
+  tags,
+  newTag,
+  updateTag,
+  deleteTag,
+  activeTagIds,
+  onToggleTag,
+  onClearTags,
 }: NavbarProps) => {
   return (
     <Sidebar className="applications_nav">
@@ -59,7 +75,11 @@ export const Navbar = ({
               <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
-              <NewApplication resumes={resumes} onCreated={onCreated} />
+              <NewApplication
+                resumes={resumes}
+                tags={tags}
+                onCreated={onCreated}
+              />
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
@@ -79,6 +99,39 @@ export const Navbar = ({
                 onSetDefault={onSetDefaultResume}
                 onShowLinked={onShowLinkedApplications}
               />
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup className="group_tags">
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              Tags
+              <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
+            </SidebarGroupLabel>
+            <CollapsibleContent className="nav_group_content">
+              <TagsAction
+                tags={tags}
+                newTag={newTag}
+                updateTag={updateTag}
+                deleteTag={deleteTag}
+              />
+              <Collapsible defaultOpen className="group/view">
+                <SidebarGroupLabel
+                  render={<CollapsibleTrigger />}
+                  className="w-full"
+                >
+                  View
+                  <ChevronDown className="ml-auto transition-transform group-data-open/view:rotate-180" />
+                </SidebarGroupLabel>
+                <CollapsibleContent className="pl-3">
+                  <Tags
+                    tags={tags}
+                    activeTagIds={activeTagIds}
+                    onToggle={onToggleTag}
+                    onClear={onClearTags}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>

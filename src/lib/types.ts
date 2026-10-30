@@ -11,6 +11,14 @@ export interface JobApplication {
   location?: string;
   locationType: string;
   resumeId?: number;
+  tagIds?: number[];
+}
+
+export interface Tag {
+  id?: number;
+  name: string;
+  colorHex: string;
+  scope: string;
 }
 
 export interface Resume {
@@ -32,6 +40,7 @@ export interface NewApplicationProps {
   location?: string;
   locationType?: string;
   resumeId?: number;
+  tagIds?: number[];
 }
 
 export interface DeleteApplicationProps {
