@@ -1,5 +1,11 @@
 import type { TagProps } from "@/components/Application/Tag/Tags";
-import type { JobApplication, NewApplicationProps, Resume, Tag } from "./types";
+import type {
+  JobApplication,
+  NewApplicationProps,
+  Resume,
+  StatusHistory,
+  Tag,
+} from "./types";
 
 const BASE_URL = "http://localhost:8080/api";
 
@@ -86,6 +92,10 @@ export const postResume = (
 
 export const getResumes = (token: string): Promise<Resume[]> => {
   return authFetch("/resumes", token);
+};
+
+export const getAllStats = (token: string): Promise<StatusHistory[]> => {
+  return authFetch("/stats", token);
 };
 
 export const renameResume = (

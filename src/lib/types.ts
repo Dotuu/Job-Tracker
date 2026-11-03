@@ -30,6 +30,12 @@ export interface Resume {
   uplodedAt?: string;
 }
 
+export interface StatusHistory {
+  id?: number;
+  changedAt: string;
+  source: string;
+}
+
 export interface NewApplicationProps {
   companyName: string;
   roleTitle: string;

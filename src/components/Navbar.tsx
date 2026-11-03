@@ -12,7 +12,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { BriefcaseBusinessIcon, ChevronDown, LogOutIcon } from "lucide-react";
+import {
+  BriefcaseBusinessIcon,
+  ChartLine,
+  ChevronDown,
+  Eye,
+  LogOutIcon,
+} from "lucide-react";
 import type { JobApplication, Resume, Tag } from "@/lib/types";
 import { Show, SignOutButton } from "@clerk/react";
 import { Button } from "./ui/button";
@@ -21,6 +27,7 @@ import { NewResume } from "./Application/Resume/NewResume";
 import { ViewResume } from "./Application/Resume/ViewResume";
 import { Tags, type TagProps } from "./Application/Tag/Tags";
 import { TagsAction } from "./Application/Tag/TagsAction";
+import { Link } from "react-router";
 
 interface NavbarProps {
   onCreated: (application: JobApplication) => void;
@@ -75,6 +82,12 @@ export const Navbar = ({
               <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
+              <Link to={"/applications"}>
+                <Button variant="ghost" size="sm" className="nav_action_btn">
+                  <Eye />
+                  View Application(s)
+                </Button>
+              </Link>
               <NewApplication
                 resumes={resumes}
                 tags={tags}
@@ -133,6 +146,26 @@ export const Navbar = ({
                 </CollapsibleContent>
               </Collapsible>
             </CollapsibleContent>
+            <Collapsible defaultOpen className="group/collapsible">
+              <SidebarGroup className="group_stats">
+                <SidebarGroupLabel render={<CollapsibleTrigger />}>
+                  Stats
+                  <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
+                </SidebarGroupLabel>
+                <CollapsibleContent className="nav_group_content">
+                  <Link to={"/stats"}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="nav_action_btn"
+                    >
+                      <ChartLine />
+                      View Stats
+                    </Button>
+                  </Link>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
           </SidebarGroup>
         </Collapsible>
       </SidebarContent>
