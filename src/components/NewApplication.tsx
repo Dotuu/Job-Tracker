@@ -21,6 +21,8 @@ import {
   updateApplicationTags,
 } from "@/lib/api";
 import { FilePlusIcon } from "lucide-react";
+import { ScrollArea } from "./ui/scroll-area";
+import "./NewApplication.scss";
 
 export const NewApplication = ({
   onCreated,
@@ -61,12 +63,14 @@ export const NewApplication = ({
         <DialogHeader>
           <DialogTitle>Create new Application</DialogTitle>
         </DialogHeader>
-        <ApplicationForm
-          submitLabel={"Create Application"}
-          onSubmit={handleSubmit}
-          resumes={resumes}
-          tags={tags}
-        />
+        <ScrollArea className={"new_application_scroll"}>
+          <ApplicationForm
+            submitLabel={"Create Application"}
+            onSubmit={handleSubmit}
+            resumes={resumes}
+            tags={tags}
+          />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

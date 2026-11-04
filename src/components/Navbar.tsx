@@ -146,26 +146,22 @@ export const Navbar = ({
                 </CollapsibleContent>
               </Collapsible>
             </CollapsibleContent>
-            <Collapsible defaultOpen className="group/collapsible">
-              <SidebarGroup className="group_stats">
-                <SidebarGroupLabel render={<CollapsibleTrigger />}>
-                  Stats
-                  <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
-                </SidebarGroupLabel>
-                <CollapsibleContent className="nav_group_content">
-                  <Link to={"/stats"}>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="nav_action_btn"
-                    >
-                      <ChartLine />
-                      View Stats
-                    </Button>
-                  </Link>
-                </CollapsibleContent>
-              </SidebarGroup>
-            </Collapsible>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup className="group_stats">
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              Stats
+              <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
+            </SidebarGroupLabel>
+            <CollapsibleContent className="nav_group_content">
+              <Link to={"/stats"}>
+                <Button variant="ghost" size="sm" className="nav_action_btn">
+                  <ChartLine />
+                  View Stats
+                </Button>
+              </Link>
+            </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
       </SidebarContent>
