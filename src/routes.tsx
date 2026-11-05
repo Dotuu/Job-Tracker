@@ -4,8 +4,13 @@ import { About } from "./routes/About.tsx";
 import { AppLayout } from "./routes/AppLayout.tsx";
 import { Applications } from "./routes/Applications.tsx";
 import { Stats } from "./routes/Stats.tsx";
+import { NotFound } from "./routes/NotFound.tsx";
 
 export const router = createBrowserRouter([
+  {
+    path: "*",
+    Component: NotFound,
+  },
   {
     path: "/",
     Component: App,
