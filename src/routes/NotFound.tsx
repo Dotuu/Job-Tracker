@@ -1,4 +1,4 @@
-import notFoundImg from "@/assets/404.jpg";
+import notFoundImg from "@/assets/404.png";
 import "./NotFound.scss";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";

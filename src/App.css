@@ -4,6 +4,7 @@
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/roboto";
 @import "@fontsource-variable/figtree";
+@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -210,8 +211,8 @@
 }
 
 @theme inline {
-  --font-heading: 'Figtree Variable', sans-serif;
-  --font-sans: 'Roboto Variable', sans-serif;
+  --font-heading: "Figtree Variable", sans-serif;
+  --font-sans: "Inter Variable", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -331,7 +332,16 @@
   html {
     @apply font-sans;
   }
-  button:not(:disabled), [role="button"]:not(:disabled) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
 }
