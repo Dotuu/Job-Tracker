@@ -50,7 +50,7 @@ export const ApplicationNotesMenu = ({
           onChange={(e) => setDraft(e.target.value)}
         />
         <DialogFooter>
-          <Button onClick={(e) => onNotesUpdate(draft)}>Save</Button>
+          <Button onClick={() => onNotesUpdate(draft)}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

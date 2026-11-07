@@ -7,14 +7,14 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Tag, Trash2 } from "lucide-react";
+import { Tag as TagIcon, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { TagForm, type TagFormValues } from "./TagForm";
-import type { TagProps } from "./Tags";
+import type { Tag } from "@/lib/types";
 
 interface ManageTagsFormProps {
-  tags: TagProps[];
-  updateTag: (tag: TagProps) => void | Promise<void>;
+  tags: Tag[];
+  updateTag: (tag: Tag) => void | Promise<void>;
   deleteTag: (tagId: number) => void | Promise<void>;
   onDone: () => void;
 }
@@ -30,7 +30,7 @@ export const ManageTagsForm = ({
 
   const selectedTag = tags.find((tag) => tag.id === selectedId) ?? null;
 
-  const selectTag = (tag: TagProps | null) => {
+  const selectTag = (tag: Tag | null) => {
     setSelectedId(tag?.id ?? null);
     setConfirmDelete(false);
   };
@@ -45,7 +45,6 @@ export const ManageTagsForm = ({
 
   const handleDelete = async () => {
     if (!selectedTag) return;
-    if (!selectedTag.id) return;
 
     await deleteTag(selectedTag.id);
     selectTag(null);
@@ -54,7 +53,7 @@ export const ManageTagsForm = ({
   if (tags.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed py-10 text-center text-sm text-muted-foreground">
-        <Tag className="size-8 opacity-50" />
+        <TagIcon className="size-8 opacity-50" />
         <p>No tags yet. Create one with “New Tag” first.</p>
       </div>
     );
@@ -99,15 +98,15 @@ export const ManageTagsForm = ({
         <Combobox
           id={"manage_tag_select"}
           items={tags}
-          itemToStringLabel={(tag: TagProps) => tag.name}
-          itemToStringValue={(tag: TagProps) => String(tag.id)}
+          itemToStringLabel={(tag: Tag) => tag.name}
+          itemToStringValue={(tag: Tag) => String(tag.id)}
           value={selectedTag}
-          onValueChange={(tag: TagProps | null) => selectTag(tag)}
+          onValueChange={(tag: Tag | null) => selectTag(tag)}
         >
           <ComboboxInput placeholder={"Choose a tag"} />
           <ComboboxContent>
             <ComboboxList>
-              {(tag: TagProps) => (
+              {(tag: Tag) => (
                 <ComboboxItem key={tag.id} value={tag}>
                   <span
                     className="size-2.5 shrink-0 rounded-full"

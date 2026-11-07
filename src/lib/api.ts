@@ -1,13 +1,23 @@
-import type { TagProps } from "@/components/Application/Tag/Tags";
 import type {
   JobApplication,
   NewApplicationProps,
+  NewTagData,
   Resume,
   StatusHistory,
   Tag,
 } from "./types";
 
-const BASE_URL = "http://localhost:8080/api";
+// Set VITE_API_URL (e.g. https://api.yourdomain.com) for production builds.
+// The localhost fallback only applies to `npm run dev`.
+const API_URL: string | undefined =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? "http://localhost:8080" : undefined);
+
+if (!API_URL) {
+  throw new Error("VITE_API_URL must be set for production builds");
+}
+
+const BASE_URL = `${API_URL}/api`;
 
 const authFetch = async (
   path: string,
@@ -30,7 +40,7 @@ const authFetch = async (
   }
 
   if (
-    response.status == 204 ||
+    response.status === 204 ||
     response.headers.get("content-length") === "0"
   ) {
     return null;
@@ -49,10 +59,23 @@ export const postApplication = (
   });
 };
 
-export const postTag = (token: string, tag: TagProps): Promise<Tag> => {
+export const postTag = (token: string, tag: NewTagData): Promise<Tag> => {
   return authFetch("/tags", token, {
     method: "POST",
     body: JSON.stringify(tag),
+  });
+};
+
+export const updateTag = (token: string, tag: Tag): Promise<Tag> => {
+  return authFetch(`/tags/${tag.id}`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ name: tag.name, colorHex: tag.colorHex }),
+  });
+};
+
+export const deleteTag = (token: string, tagId: number) => {
+  return authFetch(`/tags/${tagId}`, token, {
+    method: "DELETE",
   });
 };
 
@@ -71,7 +94,7 @@ export const getApplications = (token: string): Promise<JobApplication[]> => {
   return authFetch("/applications", token);
 };
 
-export const getTags = (token: string): Promise<TagProps[]> => {
+export const getTags = (token: string): Promise<Tag[]> => {
   return authFetch("/tags", token);
 };
 

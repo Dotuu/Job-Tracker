@@ -15,19 +15,21 @@ export interface JobApplication {
 }
 
 export interface Tag {
-  id?: number;
+  id: number;
   name: string;
   colorHex: string;
   scope: string;
 }
 
+export type NewTagData = Omit<Tag, "id">;
+
 export interface Resume {
-  id?: number;
+  id: number;
   fileName: string;
   contentType?: string;
   sizeBytes?: number;
   isDefault: boolean;
-  uplodedAt?: string;
+  uploadedAt?: string;
 }
 
 export interface StatusHistory {

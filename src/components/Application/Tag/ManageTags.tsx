@@ -10,12 +10,12 @@ import {
 import { Settings } from "lucide-react";
 import { useState } from "react";
 import { ManageTagsForm } from "./ManageTagsForm";
-import type { TagProps } from "./Tags";
+import type { Tag } from "@/lib/types";
 
 interface ManageTagsProps {
-  updateTag: (tag: TagProps) => void | Promise<void>;
+  updateTag: (tag: Tag) => void | Promise<void>;
   deleteTag: (tagId: number) => void | Promise<void>;
-  tags: TagProps[];
+  tags: Tag[];
 }
 
 export const ManageTags = ({ updateTag, deleteTag, tags }: ManageTagsProps) => {

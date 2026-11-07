@@ -3,6 +3,7 @@ import {
   Field,
   FieldContent,
   FieldDescription,
+  FieldError,
   FieldLabel,
   FieldSet,
   FieldTitle,
@@ -35,6 +36,15 @@ import {
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 
+// The backend only accepts http(s) URLs, so add https:// when the user types a bare domain.
+const normalizeUrl = (value: string): string => {
+  const trimmed = value.trim();
+  if (trimmed === "" || /^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
 interface ApplicationFormProps {
   initialValues?: NewApplicationProps;
   submitLabel: string;
@@ -66,9 +76,10 @@ export const ApplicationForm = ({
     roleTitle: false,
     locationType: false,
   });
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const convertToEnumValue = (str: string): string => {
-    return str.toUpperCase().replace(" ", "_");
+    return str.toUpperCase().replaceAll(" ", "_");
   };
 
   const convertFromEnumValue = (str: string): string => {
@@ -103,9 +114,7 @@ export const ApplicationForm = ({
     initialValues?.tagIds ?? [],
   );
 
-  const selectedTags = tags.filter(
-    (tag) => tag.id != null && selectedTagIds.includes(tag.id),
-  );
+  const selectedTags = tags.filter((tag) => selectedTagIds.includes(tag.id));
 
   const tagsAnchor = useComboboxAnchor();
 
@@ -125,7 +134,7 @@ export const ApplicationForm = ({
     const applicationData: NewApplicationProps = {
       companyName: String(formData.get("company_name") ?? ""),
       roleTitle: String(formData.get("role_title") ?? ""),
-      jobUrl: String(formData.get("job_url") ?? ""),
+      jobUrl: normalizeUrl(String(formData.get("job_url") ?? "")),
       dateApplied: date ? format(date, "yyyy-MM-dd") : "",
       source: jobSourceValue,
       status: convertToEnumValue(jobStatusValue),
@@ -137,23 +146,27 @@ export const ApplicationForm = ({
       tagIds: selectedTagIds,
     };
 
+    if (!validateForm(applicationData)) {
+      return;
+    }
+
+    setSubmitError(null);
     try {
-      if (validateForm(applicationData)) {
-        await onSubmit(applicationData);
-      }
+      await onSubmit(applicationData);
     } catch (error) {
-      throw new Error("Failed to submit application", { cause: error });
+      console.error(error);
+      setSubmitError("Failed to save application. Please try again.");
     }
   };
 
   const validateForm = (data: NewApplicationProps): boolean => {
     let validate: boolean = true;
 
-    if (data.dateApplied == "" || data.dateApplied == null) {
+    if (!data.dateApplied) {
       data.dateApplied = format(Date.now(), "yyyy-MM-dd");
     }
 
-    if (data.roleTitle == "" || data.roleTitle == null) {
+    if (!data.roleTitle) {
       setErrors((prev) => ({
         ...prev,
         roleTitle: true,
@@ -167,7 +180,7 @@ export const ApplicationForm = ({
       }));
     }
 
-    if (data.status == "" || data.status == null) {
+    if (!data.status) {
       setErrors((prev) => ({
         ...prev,
         status: true,
@@ -181,7 +194,7 @@ export const ApplicationForm = ({
       }));
     }
 
-    if (data.companyName == "" || data.companyName == null) {
+    if (!data.companyName) {
       setErrors((prev) => ({
         ...prev,
         companyName: true,
@@ -195,7 +208,7 @@ export const ApplicationForm = ({
       }));
     }
 
-    if (data.locationType == "" || data.locationType == null) {
+    if (!data.locationType) {
       setErrors((prev) => ({
         ...prev,
         locationType: true,
@@ -428,7 +441,7 @@ export const ApplicationForm = ({
             isItemEqualToValue={(a: Tag, b: Tag) => a.id === b.id}
             value={selectedTags}
             onValueChange={(value: Tag[]) =>
-              setSelectedTagIds(value.flatMap((tag) => tag.id ?? []))
+              setSelectedTagIds(value.map((tag) => tag.id))
             }
           >
             <ComboboxChips ref={tagsAnchor}>
@@ -471,8 +484,9 @@ export const ApplicationForm = ({
           </Combobox>
         </Field>
 
-        <Field>
+        <Field data-invalid={submitError !== null}>
           <Button type={"submit"}>{submitLabel}</Button>
+          {submitError && <FieldError>{submitError}</FieldError>}
         </Field>
       </FieldSet>
     </form>

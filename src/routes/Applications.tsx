@@ -4,7 +4,7 @@ import { getApplications, searchApplication } from "@/lib/api";
 import { useDebouncedCallback } from "use-debounce";
 import "./Applications.scss";
 import { ApplicationSearch } from "@/components/ApplicationSearch";
-import { useAppData } from "./AppLayout";
+import { useAppData } from "@/hooks/use-app-data";
 
 export const Applications = () => {
   const getAuthToken = useAuthToken();
@@ -31,12 +31,16 @@ export const Applications = () => {
   const isFiltered = resumeFilter !== null || activeTagIds.length > 0;
 
   const handleSearch = useDebouncedCallback(async (query: string) => {
-    const token = await getAuthToken();
-    setApplications(
-      query.trim() === ""
-        ? await getApplications(token)
-        : await searchApplication(token, query.trim()),
-    );
+    try {
+      const token = await getAuthToken();
+      setApplications(
+        query.trim() === ""
+          ? await getApplications(token)
+          : await searchApplication(token, query.trim()),
+      );
+    } catch (error) {
+      console.error("Search failed", error);
+    }
   }, 200);
 
   return (

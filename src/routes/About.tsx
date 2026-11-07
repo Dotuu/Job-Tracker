@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   Briefcase,
   ChartColumn,
-  ListOrdered,
   Tags,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

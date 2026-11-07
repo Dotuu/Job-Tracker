@@ -7,6 +7,9 @@ import applicationsImg from "@/assets/applications.png";
 import "./HomePage.scss";
 
 export const HomePage = () => {
+  const navigate = useNavigate();
+  const { isLoaded, isSignedIn } = useAuth();
+
   const goToAbout = () => {
     navigate("/about");
   };
@@ -15,20 +18,16 @@ export const HomePage = () => {
     navigate("/applications");
   };
 
-  const { isLoaded, isSignedIn } = useAuth();
-
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      goToApplications();
+      navigate("/applications");
     }
-  }, [isLoaded, isSignedIn, goToApplications]);
+  }, [isLoaded, isSignedIn, navigate]);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
     return () => document.documentElement.classList.remove("dark");
   }, []);
-
-  const navigate = useNavigate();
 
   return (
     <main className="home_page">

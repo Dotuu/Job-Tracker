@@ -11,17 +11,16 @@ import {
   updateNotes,
   getTags,
   postTag,
+  updateTag,
+  deleteTag,
 } from "@/lib/api";
-import type { JobApplication, Resume, Tag } from "@/lib/types";
+import type { JobApplication, NewTagData, Resume, Tag } from "@/lib/types";
+import type { AppData } from "@/hooks/use-app-data";
+import { getErrorMessage } from "@/lib/utils";
 import { useAuth } from "@clerk/react";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  Outlet,
-  useMatches,
-  useNavigate,
-  useOutletContext,
-} from "react-router";
+import { Outlet, useMatches, useNavigate } from "react-router";
 import "./Applications.scss";
 import {
   SidebarInset,
@@ -29,24 +28,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import type { TagProps } from "@/components/Application/Tag/Tags";
-
-export type AppData = {
-  applications: JobApplication[];
-  setApplications: React.Dispatch<React.SetStateAction<JobApplication[]>>;
-  resumes: Resume[];
-  tags: Tag[];
-  error: string | null;
-  resumeFilter: Resume | null;
-  activeTagIds: number[];
-  toggleTag: (tagId: number) => void;
-  onUpdated: (updated: JobApplication) => void;
-  onDeleted: (id: number) => void;
-  onNotesUpdate: (id: number, notes: string) => Promise<void>;
-  onUnlinkResume: (applicationId: number) => Promise<void>;
-};
-
-export const useAppData = () => useOutletContext<AppData>();
 
 export const AppLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
@@ -99,7 +80,7 @@ export const AppLayout = () => {
         }
       } catch (error) {
         if (!ignore) {
-          setError((error as Error).message);
+          setError(getErrorMessage(error));
         }
       }
     };
@@ -122,19 +103,19 @@ export const AppLayout = () => {
       setResumes((prev) => [...prev, created]);
       return true;
     } catch (error) {
-      setError((error as Error).message);
+      setError(getErrorMessage(error));
       return false;
     }
   };
 
-  const handleCreatedTag = async (tag: TagProps) => {
+  const handleCreatedTag = async (tag: NewTagData) => {
     try {
       const token = await getAuthToken();
       const created = await postTag(token, tag);
       setTags((prev) => [...prev, created]);
       return true;
     } catch (error) {
-      setError((error as Error).message);
+      setError(getErrorMessage(error));
       return false;
     }
   };
@@ -145,7 +126,7 @@ export const AppLayout = () => {
       const updated = await renameResume(token, id, fileName);
       setResumes((prev) => prev.map((r) => (r.id === id ? updated : r)));
     } catch (error) {
-      setError((error as Error).message);
+      setError(getErrorMessage(error));
     }
   };
 
@@ -157,7 +138,7 @@ export const AppLayout = () => {
         prev.map((r) => (r.id === id ? updated : { ...r, isDefault: false })),
       );
     } catch (error) {
-      setError((error as Error).message);
+      setError(getErrorMessage(error));
     }
   };
 
@@ -167,7 +148,7 @@ export const AppLayout = () => {
       await deleteResume(token, id);
       setResumes(await getResumes(token));
     } catch (error) {
-      setError((error as Error).message);
+      setError(getErrorMessage(error));
     }
   };
 
@@ -190,13 +171,36 @@ export const AppLayout = () => {
         prev.map((app) => (app.id === id ? { ...app, notes } : app)),
       );
     } catch (err) {
-      setError((err as Error).message);
+      setError(getErrorMessage(err));
     }
   };
 
-  const handleEditTag = async (tag: TagProps) => {};
+  const handleEditTag = async (tag: Tag) => {
+    try {
+      const token = await getAuthToken();
+      const updated = await updateTag(token, tag);
+      setTags((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+    } catch (error) {
+      setError(getErrorMessage(error));
+    }
+  };
 
-  const handleDeleteTag = async (tagId: number) => {};
+  const handleDeleteTag = async (tagId: number) => {
+    try {
+      const token = await getAuthToken();
+      await deleteTag(token, tagId);
+      setTags((prev) => prev.filter((t) => t.id !== tagId));
+      setActiveTagIds((prev) => prev.filter((id) => id !== tagId));
+      setApplications((prev) =>
+        prev.map((app) => ({
+          ...app,
+          tagIds: app.tagIds?.filter((id) => id !== tagId),
+        })),
+      );
+    } catch (error) {
+      setError(getErrorMessage(error));
+    }
+  };
 
   const handleUnlinkResume = async (applicationId: number) => {
     try {
@@ -204,7 +208,7 @@ export const AppLayout = () => {
       const updated = await updateApplicationResume(token, applicationId, null);
       handleUpdated(updated);
     } catch (err) {
-      setError((err as Error).message);
+      setError(getErrorMessage(err));
     }
   };
 

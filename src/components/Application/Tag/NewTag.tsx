@@ -10,11 +10,11 @@ import {
 import { TagPlus } from "lucide-react";
 import { useState } from "react";
 import { TagForm, type TagFormValues } from "./TagForm";
-import type { TagProps } from "./Tags";
+import type { NewTagData, Tag } from "@/lib/types";
 
 interface NewTagProps {
-  newTag: (tag: TagProps) => void | Promise<void>;
-  tags: TagProps[];
+  newTag: (tag: NewTagData) => void | Promise<void>;
+  tags: Tag[];
 }
 
 export const NewTag = ({ newTag, tags }: NewTagProps) => {

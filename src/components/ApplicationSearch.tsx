@@ -16,8 +16,8 @@ export const ApplicationSearch = ({
   onSearchChange,
 }: ApplicationSearchProps) => {
   return (
-    <div className="applicaion_search_wrapper">
-      <InputGroup id={"appliation_search"}>
+    <div className="application_search_wrapper">
+      <InputGroup id={"application_search"}>
         <InputGroupInput
           placeholder={"Search Applications..."}
           onChange={(e) => onSearchChange(e.target.value)}

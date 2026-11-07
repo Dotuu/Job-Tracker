@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAppData } from "./AppLayout";
+import { useAppData } from "@/hooks/use-app-data";
 import { computeStats } from "@/lib/stats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/Stats/StatCard";

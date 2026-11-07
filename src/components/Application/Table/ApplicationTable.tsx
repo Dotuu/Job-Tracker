@@ -82,7 +82,9 @@ const LocationPill = ({
     try {
       await navigator.clipboard.writeText(location);
       setCopied(true);
-    } catch {}
+    } catch (error) {
+      console.error("Failed to copy address", error);
+    }
   };
 
   return (
@@ -121,7 +123,7 @@ const TagChips = ({
   return (
     <span className="tag_list">
       {visible.map((tag) => {
-        const active = activeTagIds.includes(tag.id!);
+        const active = activeTagIds.includes(tag.id);
         return (
           <button
             key={tag.id}
@@ -131,7 +133,7 @@ const TagChips = ({
             title={
               active ? `Remove ${tag.name} filter` : `Filter by ${tag.name}`
             }
-            onClick={() => onToggle(tag.id!)}
+            onClick={() => onToggle(tag.id)}
           >
             <span className="tag_dot" style={{ background: tag.colorHex }} />
             <span className="tag_chip_name">{tag.name}</span>

@@ -27,7 +27,7 @@ interface TagFormProps {
   secondaryAction?: ReactNode;
 }
 
-export const PRESET_COLORS = [
+const PRESET_COLORS = [
   "#EF4444",
   "#F97316",
   "#EAB308",
@@ -42,7 +42,7 @@ const HEX_PATTERN = /^#[0-9A-F]{6}$/i;
 const MAX_NAME_LENGTH = 50;
 const FALLBACK_COLOR = "#737373";
 
-export const TagPill = ({
+const TagPill = ({
   name,
   colorHex,
 }: {

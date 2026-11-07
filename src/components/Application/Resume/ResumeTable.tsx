@@ -73,7 +73,7 @@ export const ResumeTable = ({
 
   const startEdit = (resume: Resume) => {
     setConfirmDeleteId(null);
-    setEditingId(resume.id!);
+    setEditingId(resume.id);
     setDraftName(resume.fileName);
   };
 
@@ -85,7 +85,7 @@ export const ResumeTable = ({
   const saveEdit = (resume: Resume) => {
     const trimmed = draftName.trim();
     if (trimmed && trimmed !== resume.fileName) {
-      onRename(resume.id!, trimmed);
+      onRename(resume.id, trimmed);
     }
     cancelEdit();
   };
@@ -117,7 +117,7 @@ export const ResumeTable = ({
           const isConfirmingDelete = confirmDeleteId === resume.id;
           const meta = [
             formatSize(resume.sizeBytes),
-            formatDate(resume.uplodedAt),
+            formatDate(resume.uploadedAt),
           ]
             .filter(Boolean)
             .join(" · ");
@@ -196,7 +196,7 @@ export const ResumeTable = ({
                       variant="destructive"
                       size="xs"
                       onClick={() => {
-                        onDelete(resume.id!);
+                        onDelete(resume.id);
                         setConfirmDeleteId(null);
                       }}
                     >
@@ -223,7 +223,7 @@ export const ResumeTable = ({
                           size="icon-sm"
                           className="text-muted-foreground hover:text-amber-500"
                           onClick={() =>
-                            onSetDefault(resume.id!, currentDefaultId)
+                            onSetDefault(resume.id, currentDefaultId)
                           }
                         >
                           <Star />
@@ -245,7 +245,7 @@ export const ResumeTable = ({
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => onShowLinked(resume.id!)}
+                        onClick={() => onShowLinked(resume.id)}
                       >
                         <BriefcaseBusiness />
                       </Button>
@@ -255,7 +255,7 @@ export const ResumeTable = ({
                         variant="ghost"
                         size="icon-sm"
                         className="text-muted-foreground hover:text-destructive"
-                        onClick={() => setConfirmDeleteId(resume.id!)}
+                        onClick={() => setConfirmDeleteId(resume.id)}
                       >
                         <Trash2 />
                       </Button>

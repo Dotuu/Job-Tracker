@@ -1,15 +1,9 @@
 import { Button } from "@/components/ui/button";
+import type { Tag } from "@/lib/types";
 import { Check } from "lucide-react";
 
-export interface TagProps {
-  id?: number;
-  name: string;
-  colorHex: string;
-  scope: string;
-}
-
 interface TagsProps {
-  tags: TagProps[];
+  tags: Tag[];
   activeTagIds: number[];
   onToggle: (tagId: number) => void;
   onClear: () => void;
@@ -24,7 +18,7 @@ export const Tags = ({ tags, activeTagIds, onToggle, onClear }: TagsProps) => {
     <>
       <ul className="nav_tags">
         {tags.map((tag) => {
-          const active = tag.id != null && activeTagIds.includes(tag.id);
+          const active = activeTagIds.includes(tag.id);
           return (
             <li key={tag.id}>
               <Button
@@ -32,7 +26,7 @@ export const Tags = ({ tags, activeTagIds, onToggle, onClear }: TagsProps) => {
                 size="sm"
                 className={`nav_tag${active ? " nav_tag_active" : ""}`}
                 aria-pressed={active}
-                onClick={() => tag.id != null && onToggle(tag.id)}
+                onClick={() => onToggle(tag.id)}
               >
                 <span
                   className="tag_dot"

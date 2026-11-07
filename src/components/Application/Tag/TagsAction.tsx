@@ -1,11 +1,11 @@
 import { ManageTags } from "./ManageTags";
 import { NewTag } from "./NewTag";
-import type { TagProps } from "./Tags";
+import type { NewTagData, Tag } from "@/lib/types";
 
 interface TagsActionProps {
-  tags: TagProps[];
-  newTag: (tag: TagProps) => void;
-  updateTag: (tag: TagProps) => void;
+  tags: Tag[];
+  newTag: (tag: NewTagData) => void;
+  updateTag: (tag: Tag) => void;
   deleteTag: (tagId: number) => void;
 }
 

@@ -19,13 +19,13 @@ import {
   Eye,
   LogOutIcon,
 } from "lucide-react";
-import type { JobApplication, Resume, Tag } from "@/lib/types";
+import type { JobApplication, NewTagData, Resume, Tag } from "@/lib/types";
 import { Show, SignOutButton } from "@clerk/react";
 import { Button } from "./ui/button";
 import "./Navbar.scss";
 import { NewResume } from "./Application/Resume/NewResume";
 import { ViewResume } from "./Application/Resume/ViewResume";
-import { Tags, type TagProps } from "./Application/Tag/Tags";
+import { Tags } from "./Application/Tag/Tags";
 import { TagsAction } from "./Application/Tag/TagsAction";
 import { Link } from "react-router";
 
@@ -39,8 +39,8 @@ interface NavbarProps {
   resumes: Resume[];
   applications: JobApplication[];
   tags: Tag[];
-  newTag: (tag: TagProps) => void;
-  updateTag: (tag: TagProps) => void;
+  newTag: (tag: NewTagData) => void;
+  updateTag: (tag: Tag) => void;
   deleteTag: (tagId: number) => void;
   activeTagIds: number[];
   onToggleTag: (tagId: number) => void;
