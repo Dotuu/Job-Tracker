@@ -150,7 +150,7 @@ export const ResumeTable = ({
                         {resume.fileName}
                       </button>
                       {resume.isDefault && (
-                        <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">
+                        <span className="shrink-0 rounded-full border px-2 text-xs leading-5 font-medium text-muted-foreground">
                           Default
                         </span>
                       )}

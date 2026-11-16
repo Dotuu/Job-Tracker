@@ -37,7 +37,7 @@ export const NewResume = ({ submitResume }: NewResumeProps) => {
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upload new Resume (PDF only)</DialogTitle>
+          <DialogTitle>Upload new resume (PDF only)</DialogTitle>
           <DialogDescription>
             Name and upload resume, for easy access here.
           </DialogDescription>

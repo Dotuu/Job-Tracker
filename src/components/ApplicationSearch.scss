@@ -8,4 +8,20 @@
     width: 20rem;
     margin-left: auto;
   }
+
+  @media (max-width: 640px) {
+    width: 100%;
+
+    #application_search {
+      width: 100%;
+    }
+  }
+}
+
+.search_hint_code {
+  padding: 0 0.25rem;
+  border-radius: calc(var(--radius) * 0.6);
+  background: color-mix(in oklch, var(--background) 15%, transparent);
+  color: inherit;
+  font-size: inherit;
 }

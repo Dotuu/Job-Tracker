@@ -136,7 +136,7 @@ export const TagForm = ({
                   aria-label={`Use color ${color}`}
                   aria-pressed={selected}
                   onClick={() => setColorHex(color)}
-                  className={`size-6 rounded-full border border-black/10 transition-transform hover:scale-110 ${
+                  className={`size-6 rounded-full border border-foreground/15 transition-transform hover:scale-110 ${
                     selected
                       ? "ring-2 ring-ring ring-offset-2 ring-offset-background"
                       : ""

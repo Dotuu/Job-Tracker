@@ -334,7 +334,13 @@ export const ApplicationForm = ({
           <Popover>
             <PopoverTrigger
               id={"applied_date"}
-              render={<Button data-empty={!date} />}
+              render={
+                <Button
+                  variant="outline"
+                  data-empty={!date}
+                  className="w-full justify-start font-normal data-[empty=true]:text-muted-foreground"
+                />
+              }
             >
               <CalendarIcon />
               {date ? (

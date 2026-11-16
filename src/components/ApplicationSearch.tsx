@@ -33,16 +33,13 @@ export const ApplicationSearch = ({
             </TooltipTrigger>
             <TooltipContent
               side="bottom"
-              className="max-w-60 flex-col items-start gap-1 bg-zinc-900 px-2.5 py-2 text-[11px] leading-snug text-zinc-100 **:data-side:bg-zinc-900 **:data-side:fill-zinc-900"
+              className="max-w-60 flex-col items-start gap-1 px-2.5 py-2 text-[11px] leading-snug"
             >
               <p>Search by company, role, date, or location.</p>
               <p>
-                Use{" "}
-                <code className="rounded bg-white/10 px-1 font-mono">#</code> to
-                filter by status, location type, or source, e.g.{" "}
-                <code className="rounded bg-white/10 px-1 font-mono">
-                  #remote
-                </code>
+                Use <code className="search_hint_code">#</code> to filter by
+                status, location type, or source, e.g.{" "}
+                <code className="search_hint_code">#remote</code>
               </p>
             </TooltipContent>
           </Tooltip>

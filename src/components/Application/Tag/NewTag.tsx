@@ -37,7 +37,7 @@ export const NewTag = ({ newTag, tags }: NewTagProps) => {
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create new Tag</DialogTitle>
+          <DialogTitle>Create new tag</DialogTitle>
           <DialogDescription>
             Name your tag and pick a color to group applications.
           </DialogDescription>

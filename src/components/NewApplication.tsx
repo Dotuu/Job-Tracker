@@ -61,7 +61,7 @@ export const NewApplication = ({
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create new Application</DialogTitle>
+          <DialogTitle>Create new application</DialogTitle>
         </DialogHeader>
         <ScrollArea className={"new_application_scroll"}>
           <ApplicationForm

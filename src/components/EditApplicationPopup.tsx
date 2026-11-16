@@ -6,6 +6,8 @@ import type {
 } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { ApplicationForm } from "./Application/Form/ApplicationForm";
+import { ScrollArea } from "./ui/scroll-area";
+import "./NewApplication.scss";
 import { useAuthToken } from "@/hooks/use-api";
 import {
   updateApplication,
@@ -60,14 +62,16 @@ export const EditApplicationPopup = ({
             {`Edit application for ${application.companyName}`}
           </DialogTitle>
         </DialogHeader>
-        <ApplicationForm
-          key={application.id}
-          initialValues={application}
-          submitLabel={"Save Changes"}
-          onSubmit={handleSubmit}
-          resumes={resumes}
-          tags={tags}
-        />
+        <ScrollArea className={"new_application_scroll"}>
+          <ApplicationForm
+            key={application.id}
+            initialValues={application}
+            submitLabel={"Save Changes"}
+            onSubmit={handleSubmit}
+            resumes={resumes}
+            tags={tags}
+          />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

@@ -1,5 +1,9 @@
 .img_404 {
   width: 30vw;
+
+  @media (max-width: 768px) {
+    width: min(80vw, 24rem);
+  }
 }
 
 .div_404 {
@@ -9,6 +13,8 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding: 0 1rem;
+  text-align: center;
 }
 
 .btn_404 {

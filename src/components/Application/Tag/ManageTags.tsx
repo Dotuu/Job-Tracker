@@ -33,7 +33,7 @@ export const ManageTags = ({ updateTag, deleteTag, tags }: ManageTagsProps) => {
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Manage Tags</DialogTitle>
+          <DialogTitle>Manage tags</DialogTitle>
           <DialogDescription>
             Rename, recolor, or delete an existing tag.
           </DialogDescription>

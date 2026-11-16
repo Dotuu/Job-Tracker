@@ -5,6 +5,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NewApplication } from "./NewApplication";
 import {
@@ -64,6 +65,9 @@ export const Navbar = ({
   onToggleTag,
   onClearTags,
 }: NavbarProps) => {
+  const { setOpenMobile } = useSidebar();
+  const closeMobileNav = () => setOpenMobile(false);
+
   return (
     <Sidebar className="applications_nav">
       <SidebarHeader className="applications_nav_header">
@@ -82,7 +86,7 @@ export const Navbar = ({
               <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
-              <Link to={"/applications"}>
+              <Link to={"/applications"} onClick={closeMobileNav}>
                 <Button variant="ghost" size="sm" className="nav_action_btn">
                   <Eye />
                   View Application(s)
@@ -155,7 +159,7 @@ export const Navbar = ({
               <ChevronDown className="ml-auto transition-transform group-data-open/collapsible:rotate-180" />
             </SidebarGroupLabel>
             <CollapsibleContent className="nav_group_content">
-              <Link to={"/stats"}>
+              <Link to={"/stats"} onClick={closeMobileNav}>
                 <Button variant="ghost" size="sm" className="nav_action_btn">
                   <ChartLine />
                   View Stats
