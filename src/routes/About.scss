@@ -94,6 +94,23 @@
   }
 }
 
+.about_credits {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+
+  a {
+    color: var(--foreground);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+}
+
 .about_links {
   display: flex;
   flex-wrap: wrap;

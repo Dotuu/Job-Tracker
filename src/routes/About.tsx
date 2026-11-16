@@ -152,6 +152,30 @@ export const About = () => {
           </CardContent>
         </Card>
       </section>
+
+      <section className="about_section">
+        <h2>Credits</h2>
+        <p className="about_credits">
+          Favicon made by{" "}
+          <a
+            href="https://www.flaticon.com/authors/juicy-fish"
+            title="juicy_fish"
+            target="_blank"
+            rel="noreferrer"
+          >
+            juicy_fish
+          </a>{" "}
+          from{" "}
+          <a
+            href="https://www.flaticon.com/"
+            title="Flaticon"
+            target="_blank"
+            rel="noreferrer"
+          >
+            www.flaticon.com
+          </a>
+        </p>
+      </section>
     </main>
   );
 };
