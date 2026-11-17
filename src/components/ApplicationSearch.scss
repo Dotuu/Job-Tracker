@@ -6,10 +6,11 @@
 
   #application_search {
     width: 20rem;
+    max-width: 100%;
     margin-left: auto;
   }
 
-  @media (max-width: 640px) {
+  @container app-main (max-width: 44rem) {
     width: 100%;
 
     #application_search {
@@ -21,7 +22,7 @@
 .search_hint_code {
   padding: 0 0.25rem;
   border-radius: calc(var(--radius) * 0.6);
-  background: color-mix(in oklch, var(--background) 15%, transparent);
+  background: var(--muted);
   color: inherit;
   font-size: inherit;
 }

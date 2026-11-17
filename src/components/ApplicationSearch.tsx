@@ -6,7 +6,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "./ui/input-group";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface ApplicationSearchProps {
   onSearchChange: (query: string) => void;
@@ -23,17 +23,20 @@ export const ApplicationSearch = ({
           onChange={(e) => onSearchChange(e.target.value)}
         />
         <InputGroupAddon align="inline-end">
-          <Tooltip>
-            <TooltipTrigger
+          <Popover>
+            <PopoverTrigger
+              openOnHover
+              delay={200}
               render={
                 <InputGroupButton size="icon-xs" aria-label="Search Info" />
               }
             >
               <Info />
-            </TooltipTrigger>
-            <TooltipContent
+            </PopoverTrigger>
+            <PopoverContent
               side="bottom"
-              className="max-w-60 flex-col items-start gap-1 px-2.5 py-2 text-[11px] leading-snug"
+              align="end"
+              className="w-auto max-w-[min(15rem,calc(100vw-2rem))] items-start gap-1 px-2.5 py-2 text-[11px] leading-snug"
             >
               <p>Search by company, role, date, or location.</p>
               <p>
@@ -41,8 +44,8 @@ export const ApplicationSearch = ({
                 status, location type, or source, e.g.{" "}
                 <code className="search_hint_code">#remote</code>
               </p>
-            </TooltipContent>
-          </Tooltip>
+            </PopoverContent>
+          </Popover>
         </InputGroupAddon>
       </InputGroup>
     </div>

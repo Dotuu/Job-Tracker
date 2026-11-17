@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import "./ApplicationTable.scss";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { ApplicationNotesMenu } from "../../ApplicationNotesMenu";
 import { Button } from "../../ui/button";
 
@@ -88,19 +88,22 @@ const LocationPill = ({
   };
 
   return (
-    <Tooltip onOpenChange={(open) => !open && setCopied(false)}>
-      <TooltipTrigger
+    <Popover onOpenChange={(open) => !open && setCopied(false)}>
+      <PopoverTrigger
         className="location_pill location_pill_copyable"
+        openOnHover
         delay={200}
-        closeOnClick={false}
         onClick={copyAddress}
       >
         {content}
-      </TooltipTrigger>
-      <TooltipContent>
-        {copied ? "Copied!" : `${location} · Click to copy`}
-      </TooltipContent>
-    </Tooltip>
+      </PopoverTrigger>
+      <PopoverContent side="top" className="table_popover">
+        <span>{location}</span>
+        <span className="table_popover_hint">
+          {copied ? "Copied!" : "Click to copy"}
+        </span>
+      </PopoverContent>
+    </Popover>
   );
 };
 
@@ -141,16 +144,21 @@ const TagChips = ({
         );
       })}
       {hidden.length > 0 && (
-        <Tooltip>
-          <TooltipTrigger className="tag_more" delay={200}>
+        <Popover>
+          <PopoverTrigger
+            className="tag_more"
+            openOnHover
+            delay={200}
+            aria-label={`Show ${hidden.length} more tags`}
+          >
             +{hidden.length}
-          </TooltipTrigger>
-          <TooltipContent>
+          </PopoverTrigger>
+          <PopoverContent side="top" className="table_popover">
             <span className="tag_more_list">
               {hidden.map((tag) => tag.name).join(", ")}
             </span>
-          </TooltipContent>
-        </Tooltip>
+          </PopoverContent>
+        </Popover>
       )}
     </span>
   );
@@ -162,18 +170,20 @@ const SortableHead = ({
   sortedCol,
   asc,
   onSort,
+  className,
 }: {
   label: string;
   column: keyof JobApplication;
   sortedCol: keyof JobApplication | null;
   asc: boolean;
   onSort: (column: keyof JobApplication) => void;
+  className?: string;
 }) => {
   const active = sortedCol === column;
   const Icon = !active ? ArrowUpDown : asc ? ArrowUp : ArrowDown;
 
   return (
-    <TableHead>
+    <TableHead className={className}>
       <span className="sortable_head">
         {label}
         <Button
@@ -235,18 +245,26 @@ export const ApplicationTable = ({
               column="companyName"
               {...sortProps}
             />
-            <SortableHead label="Role" column="roleTitle" {...sortProps} />
+            <SortableHead
+              label="Role"
+              column="roleTitle"
+              className="col_role"
+              {...sortProps}
+            />
             <SortableHead label="Status" column="status" {...sortProps} />
             <SortableHead
               label="Date Applied"
               column="dateApplied"
+              className="col_date"
               {...sortProps}
             />
-            <TableHead>Location</TableHead>
-            <TableHead>Tags</TableHead>
-            <TableHead>Source</TableHead>
-            <TableHead>Notes</TableHead>
-            <TableHead></TableHead>
+            <TableHead className="col_location">Location</TableHead>
+            <TableHead className="col_tags">Tags</TableHead>
+            <TableHead className="col_source">Source</TableHead>
+            <TableHead className="col_icon">Notes</TableHead>
+            <TableHead className="col_icon">
+              <span className="sr-only">Actions</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -275,8 +293,11 @@ export const ApplicationTable = ({
                 ) : (
                   application.companyName
                 )}
+                <span className="table_company_meta">
+                  {application.roleTitle} · {formatDate(application.dateApplied)}
+                </span>
               </TableCell>
-              <TableCell>{application.roleTitle}</TableCell>
+              <TableCell className="col_role">{application.roleTitle}</TableCell>
               <TableCell>
                 <span
                   className={`status_pill status_${application.status.toLowerCase()}`}
@@ -284,26 +305,29 @@ export const ApplicationTable = ({
                   {formatEnum(application.status)}
                 </span>
               </TableCell>
-              <TableCell className="table_muted">
+              <TableCell className="table_muted col_date">
                 {formatDate(application.dateApplied)}
               </TableCell>
-              <TableCell className="table_muted">
+              <TableCell className="table_muted col_location">
                 <LocationPill
                   locationType={application.locationType}
                   location={application.location}
                 />
               </TableCell>
-              <TableCell className="table_muted">
+              <TableCell className="table_muted col_tags">
                 <TagChips
                   tags={tagsFor(application)}
                   activeTagIds={activeTagIds}
                   onToggle={onToggleTag}
                 />
               </TableCell>
-              <TableCell className="table_muted">
+              <TableCell className="table_muted col_source">
                 {application.source || "—"}
               </TableCell>
-              <TableCell className="table_notes" title={application.notes}>
+              <TableCell
+                className="table_notes col_icon"
+                title={application.notes}
+              >
                 <Button
                   variant="ghost"
                   size="icon"
@@ -324,7 +348,7 @@ export const ApplicationTable = ({
                   }}
                 />
               </TableCell>
-              <TableCell>
+              <TableCell className="col_icon">
                 <ApplicationTableMenu
                   application={application}
                   onDeleted={onDeleted}

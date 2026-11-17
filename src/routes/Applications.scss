@@ -1,3 +1,7 @@
+.app_main {
+  container: app-main / inline-size;
+}
+
 .applications_header {
   position: sticky;
   top: 0;
@@ -60,7 +64,7 @@
   margin: 0 auto;
   padding: 2rem 2.5rem 3rem;
 
-  @media (max-width: 768px) {
+  @container app-main (max-width: 48rem) {
     padding: 1.5rem 1rem 2rem;
   }
 }
@@ -72,7 +76,7 @@
   align-items: flex-end;
   gap: 1rem;
 
-  @media (max-width: 640px) {
+  @container app-main (max-width: 44rem) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -82,7 +86,7 @@
   h1 {
     margin: 0;
     font-family: "Figtree Variable", sans-serif;
-    font-size: 1.875rem;
+    font-size: clamp(1.5rem, 1.25rem + 1.5cqi, 1.875rem);
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;

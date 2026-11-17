@@ -46,7 +46,7 @@ export const ApplicationNotesMenu = ({
             el.scrollTop = el.scrollHeight;
           }}
           defaultValue={notes}
-          className="min-h-48"
+          className="max-h-[50dvh] min-h-[min(12rem,30dvh)]"
           onChange={(e) => setDraft(e.target.value)}
         />
         <DialogFooter>

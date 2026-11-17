@@ -250,7 +250,7 @@ export const AppLayout = () => {
         onToggleTag={toggleTag}
         onClearTags={() => setActiveTagIds([])}
       />
-      <SidebarInset className="min-w-0">
+      <SidebarInset className="app_main min-w-0">
         <header className="applications_header">
           <SidebarTrigger />
           <Separator
